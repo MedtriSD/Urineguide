@@ -156,6 +156,36 @@
             .header-container { flex-direction: column; gap: 15px; text-align: center; }
             .error-grid { grid-template-columns: 1fr; }
         }
+/* 新增導覽按鈕樣式 */
+.nav-buttons {
+    display: flex;
+    gap: 10px;
+}
+.nav-btn {
+    text-decoration: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: #f1f5f9;
+    color: var(--text-dark);
+}
+.nav-btn:hover { background: #e2e8f0; }
+.btn-switch { background: var(--accent-orange); color: white; }
+.btn-switch:hover { background: #d98700; color: white; }
+
+/* 防止卡片文字誤選 */
+.card { user-select: none; }
+
+/* 手機版導覽按鈕調整 */
+@media (max-width: 768px) {
+    .header-container { flex-direction: column; }
+    .nav-buttons { margin-top: 15px; width: 100%; justify-content: center; }
+}
     </style>
 </head>
 <body>
@@ -163,7 +193,7 @@
 <header>
     <div class="header-container">
         <div class="logos">
-            <img src="medtri.png" alt="MedTri 醫兆">
+            <a href="index.html"><img src="medtri.png" alt="MedTri 醫兆"></a>
             <div class="divider"></div>
             <img src="arkray.png" alt="Arkray">
         </div>
@@ -171,9 +201,12 @@
             <h1>AX-4060 簡易故障排除</h1>
             <p>AUTION MAX™ 自動尿化學分析儀服務支援</p>
         </div>
+        <div class="nav-buttons">
+            <a href="index.html" class="nav-btn"><i class="fas fa-home"></i> 首頁</a>
+            <a href="4510.html" class="nav-btn btn-switch"><i class="fas fa-exchange-alt"></i> 切換至 AI-4510</a>
+        </div>
     </div>
 </header>
-
 <div class="search-hero">
     <div class="search-wrapper">
         <i class="fas fa-search"></i>
@@ -239,21 +272,21 @@ const rawErrors = [
     ["E102", "Power down.", "異常斷電", "測量中電源意外關閉。", "重啟暖機後重測。", "偵測到開機旗標處於設定狀態。", "N/A。"],
     ["E103", "Battery voltage error.", "電池電壓錯誤", "備份電池電壓下降。", "持續開機 24 小時充電。", "固定區域數據被改寫。", "更換電路板。"],
     ["E104", "Backup data error.", "備份數據錯誤", "備份數據損毀。", "重設時間並持續開機。", "備份數據 Checksum 比對失敗。", "更換電池或備份 RAM。"],
-    ["E105", "Version mismatch.", "版本不匹配", "面板與 CPU 程式版本不符。", "聯絡經銷商工程師。", "偵測到內部版本與發送版本不同。", "重新更新程式韌體。"],
+    ["E105", "Version mismatch.", "版本不匹配", "面板與 CPU 程式版本不符。", "聯絡醫兆工程師。", "偵測到內部版本與發送版本不同。", "重新更新程式韌體。"],
     ["E110", "Wrong type of test strip.", "試紙種類錯誤", "設定錯誤、混雜或托盤髒。", "正確設定種類，清潔托盤。", "連續 5 個樣本判定錯誤。詳情 1-2 為判定公式資訊。", "清潔/更換偵測器；音量調整。"],
     ["E111", "Unloading side full.", "卸載區滿", "卸載側滿架或移動受阻。", "移走卸載側檢體架。", "卸載偵測 PI 被持續觸發。", "清潔或更換卸載偵測 PI。"],
     ["E120", "S.G. calibration failure.", "比重校正失敗", "校正液位置反或量不足。", "補液並正確放置 Port 1/2。", "詳情 1: 001-007 指向液量、無架或偏差大於 ±0.002。", "更換比重計、感測器或檢修管路。"],
     ["E121", "Turb. cal. failure.", "濁度校正失敗", "標準液異常或無清洗液。", "N/A (Service Menu)。", "偵測到的濁度水平低於指定範圍。", "調整 A/D 音量或更換濁度計。"],
-    ["E122", "Hb calibration failure.", "血紅素校正失敗", "標準液不足或 565nm 感應異常。", "N/A (Service Menu)。", "標準液透光率比值 ≥1.0。", "更換濁度計或檢修泵浦。"],
+    ["E122", "Hb calibration failure.", "Hb校正失敗", "標準液不足或 565nm 感應異常。", "N/A (Service Menu)。", "標準液透光率比值 ≥1.0。", "更換濁度計或檢修泵浦。"],
     ["E123", "Opt. unit cal. failure.", "光學單元校正失敗", "校正條過期、未設或白板髒。", "正確放置校正條與白板重試。", "A/D Count 落在範圍外 (如 450nm 1000-1250)。", "調整 LED 光量；更換單元。"],
     ["E124", "Adjustment failure.", "自動校調失敗", "脈衝或音量調整失敗。", "N/A (Service Menu)。", "詳情 1: 001-007 指向光學、入紙或流量系統調節失敗。", "檢查對應的硬體單元。"],
     ["E130", "Two-way comm. error.", "雙向通訊失敗", "通訊設定不符或線未接。", "檢查線材連接並按 OK。", "詳情 1: 001(傳輸)、002/003(協定)、004(逾時)。", "統一儀器與主機參數設定。"],
     ["E140", "Strip marker error.", "試紙標記錯誤", "標記識別與設定不符。", "重新正確裝載試紙。", "詳情 1&2: 樣本編號與 Port 資訊。標記讀取與設定不一。", "調整單元啟動位置或光強。"],
     ["E160", "No reagent code.", "試紙代碼未註冊", "測量數超過註冊上限。", "註冊新試紙瓶並重試。", "註冊次數降至 0 時觸發。", "檢查維修選單計數器值。"],
-    ["T201", "Data ROM trouble.", "數據 ROM 故障", "ROM 初始化或寫入失敗。", "聯絡經銷商工程師。", "詳情 2: 1(寫入中斷)、3(Checksum 異常)、4(寫入失敗)。", "更換 Flash ROM；執行 Restore。"],
+    ["T201", "Data ROM trouble.", "數據 ROM 故障", "ROM 初始化或寫入失敗。", "聯絡醫兆工程師。", "詳情 2: 1(寫入中斷)、3(Checksum 異常)、4(寫入失敗)。", "更換 Flash ROM；執行 Restore。"],
     ["T202", "Internal comm. trouble.", "內部通訊故障", "I2C 或 Android 通訊異常。", "重啟電源。", "詳情 2: 2(傳輸逾時)、4(接收逾時)、5(Checksum 錯誤)。", "檢查通訊線；更換控制板。"],
-    ["T203", "No calib. curve.", "無校正曲線", "試紙資訊不全或 ROM 初始化。", "聯絡經銷商。", "選定的試紙資訊不完整，無法測量。", "更換並初始化 Flash ROM。"],
-    ["T204", "LINE COMM.", "運輸系統通訊異常", "運輸系統通訊逾時或斷線。", "聯絡經銷商工程師。", "詳情 1: 16-31 (緩衝溢位、逾時或格式錯誤)。", "檢查 IDS 模式運輸連接。"],
+    ["T203", "No calib. curve.", "無校正曲線", "試紙資訊不全或 ROM 初始化。", "聯絡醫兆工程師。", "選定的試紙資訊不完整，無法測量。", "更換並初始化 Flash ROM。"],
+    ["T204", "LINE COMM.", "運輸系統通訊異常", "運輸系統通訊逾時或斷線。", "聯絡醫兆工程師。", "詳情 1: 16-31 (緩衝溢位、逾時或格式錯誤)。", "檢查 IDS 模式運輸連接。"],
     ["T210", "Strip intro. drive.", "導入驅動故障", "托盤未裝好或傳送區髒。", "正確安裝托盤，清潔導入區。", "導入撥桿同步位移偏差超過 2mm。", "執行 Hard test [Introduction]。"],
     ["T211", "Strip transport drive.", "傳送驅動故障", "DC 馬達或 PI 偵測異常。", "清除散落試紙，聯絡維修。", "詳情 1: 001(DC馬達感測異常)；002(位移計算異常)。", "更換初始化 PI；重新校調。"],
     ["T220", "Optical unit drive.", "光學驅動故障", "廢棄盒滿阻塞光路。", "清空廢棄盒，檢查光路。", "詳情 1: 001(初始化失敗)、002(運作失敗)。脈衝偏差達 8mm。", "更換 PI；重新潤滑校調。"],
@@ -263,7 +296,7 @@ const rawErrors = [
     ["T230", "Feeder drive trouble.", "入紙驅動故障", "入紙卡紙或感測器壞。", "清除卡紙並清潔入紙器。", "詳情 1: 001(初始化)、003(運作)、004(翻轉部)。", "更換轉鼓或翻轉部 PI。"],
     ["T240", "Nozzle drive trouble.", "吸嘴驅動故障", "吸嘴上下/前後動作偏差。", "檢查吸嘴受損或同步偏差。", "詳情 1: 001-004 (上下/前後初始化或運作失敗)。", "更換吸嘴；校調脈衝值；換 PI。"],
     ["T241", "Sampling trouble.", "取樣故障", "連續 5 次吸樣/滴樣失敗。", "檢查液面高度 (2mL/40mm)。", "詳情 1: 001(無檢體)、002(滴落失敗)。", "調靈敏度；檢修泵浦機構。"],
-    ["T250", "S.G. hydrometer.", "比重計故障", "通訊失敗或吸樣未達。", "聯絡經銷商工程師。", "詳情 1: Code 17-19 (逾時)；66/67 (吸樣未達 S.G. cell)。", "更換比重計；檢查通訊線。"],
+    ["T250", "S.G. hydrometer.", "比重計故障", "通訊失敗或吸樣未達。", "聯絡醫兆工程師。", "詳情 1: Code 17-19 (逾時)；66/67 (吸樣未達 S.G. cell)。", "更換比重計；檢查通訊線。"],
     ["T251", "Turbidimeter trouble.", "濁度計故障", "細胞室髒或管路專用。", "清洗 S.G. 細胞室。", "詳情 1: 001-006 (強度異常)；007 (啟動校調錯誤)。", "調整 A/D 音量；更換單元。"],
     ["T260", "Wash pump trouble.", "清洗泵故障", "驅動或 PI 初始化失敗。", "檢查密封圈與連接。", "詳情 1: 001(初始化失敗)；002(運作失敗)。", "更換清洗泵或其初始化 PI。"],
     ["T261", "Sample pump trouble.", "取樣泵故障", "泵浦脈衝同步偏差達 2mm。", "檢查密封圈與管路。", "詳情 1: 001(初始化失敗)；002(運作失敗)。", "更換取樣泵。"],
@@ -356,5 +389,4 @@ render(fullErrors);
 </script>
 
 </body>
-
 </html>

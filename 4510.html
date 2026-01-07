@@ -181,19 +181,53 @@
             .header-container { flex-direction: column; gap: 15px; text-align: center; }
             .error-grid { grid-template-columns: 1fr; }
         }
+/* 新增導覽按鈕樣式 */
+.nav-buttons {
+    display: flex;
+    gap: 10px;
+}
+.nav-btn {
+    text-decoration: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: #f1f5f9;
+    color: var(--text-dark);
+}
+.nav-btn:hover { background: #e2e8f0; }
+.btn-switch { background: var(--accent-orange); color: white; }
+.btn-switch:hover { background: #d98700; color: white; }
+
+/* 防止卡片文字誤選 */
+.card { user-select: none; }
+
+/* 手機版導覽按鈕調整 */
+@media (max-width: 768px) {
+    .header-container { flex-direction: column; }
+    .nav-buttons { margin-top: 15px; width: 100%; justify-content: center; }
+}
     </style></head>
 <body>
 
 <header>
     <div class="header-container">
         <div class="logos">
-            <img src="medtri.png" alt="MedTri 醫兆">
+            <a href="index.html"><img src="medtri.png" alt="MedTri 醫兆"></a>
             <div class="divider"></div>
             <img src="arkray.png" alt="Arkray">
         </div>
         <div class="title-box">
             <h1>AI-4510 簡易故障排除</h1>
             <p>AUTION EYE™ 自動尿沉渣分析儀服務支援</p>
+        </div>
+        <div class="nav-buttons">
+            <a href="index.html" class="nav-btn"><i class="fas fa-home"></i> 首頁</a>
+            <a href="4060.html" class="nav-btn btn-switch"><i class="fas fa-exchange-alt"></i> 切換至 AX-4060</a>
         </div>
     </div>
 </header>
