@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>醫兆 MedTri | 尿液分析服務入口</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --arkray-green: #00A950;
+            --arkray-orange: #F39800;
+            --bg-gray: #E5E7EB;
+            --header-dark: #374151;
+            --white: #ffffff;
+            --blue-brand: #004687;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Noto Sans TC', sans-serif; 
+            background: linear-gradient(to bottom, #f9fafb, var(--bg-gray));
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-banner {
+            background: var(--white);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid var(--arkray-green);
+        }
+
+        .logo-img { height: 40px; }
+
+        .contact-info {
+            text-align: right;
+            color: var(--header-dark);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .main-hero {
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        .main-hero h1 {
+            font-size: 2.2rem;
+            color: var(--header-dark);
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .portal-grid {
+            max-width: 1100px;
+            margin: 0 auto 60px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 0 20px;
+        }
+
+        .portal-card {
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            border-top: 8px solid var(--arkray-green);
+        }
+
+        .portal-card.orange { border-top-color: var(--arkray-orange); }
+        .portal-card.blue { border-top-color: var(--blue-brand); }
+
+        .portal-card:hover { transform: translateY(-10px); }
+
+        .card-image {
+            height: 240px;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .card-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            z-index: 2;
+        }
+
+        /* 圖片遺失時的灰色佔位塊 */
+        .card-image::after {
+            content: "讀取中...";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #F3F4F6;
+            color: #9CA3AF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            z-index: 1;
+        }
+
+        .card-content {
+            padding: 30px;
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        .product-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .btn-enter {
+            display: inline-block;
+            padding: 12px 40px;
+            background: var(--header-dark);
+            color: white;
+            border-radius: 50px;
+            font-weight: 600;
+            margin-top: 15px;
+        }
+
+        .portal-card:hover .btn-enter {
+            background: var(--arkray-green);
+        }
+
+        footer {
+            margin-top: auto;
+            background: #1F2937;
+            color: rgba(255,255,255,0.7);
+            padding: 25px;
+            text-align: center;
+            font-size: 0.85rem;
+            border-top: 5px solid var(--arkray-orange);
+        }
+
+        @media (max-width: 640px) {
+            .contact-info { display: none; }
+            .portal-grid { grid-template-columns: 1fr; }
+            .card-image { height: 200px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-banner">
+    <img src="medtri.png" alt="MedTri" class="logo-img">
+    <div class="contact-info">
+        台北 02-2357-0091 | 台中 04-2275-7119 | 高雄 07-581-0536
+    </div>
+</div>
+
+<div class="main-hero">
+    <h1>/ AX-AI Bridge</h1>
+    <p>全自動尿液工作站簡易故障排除查詢系統</p>
+</div>
+
+<div class="portal-grid">
+    <a href="4060.html" class="portal-card">
+        <div class="card-image"><img src="ax-4060.png" alt="AX-4060"></div>
+        <div class="card-content">
+            <span style="color:#9CA3AF; font-size:0.85rem;">AUTION Max™</span>
+            <div class="product-title" style="color: var(--arkray-orange);">AX-4060</div>
+            <p style="color:#6B7280;">自動尿化學分析儀</p>
+            <div class="btn-enter">進入系統</div>
+        </div>
+    </a>
+
+    <a href="4510.html" class="portal-card orange">
+        <div class="card-image"><img src="AI-4510.png" alt="AI-4510"></div>
+        <div class="card-content">
+            <span style="color:#9CA3AF; font-size:0.85rem;">AUTION EYE™</span>
+            <div class="product-title" style="color: var(--arkray-orange);">AI-4510</div>
+            <p style="color:#6B7280;">自動尿沉渣分析儀</p>
+            <div class="btn-enter">進入系統</div>
+        </div>
+    </a>
+
+    <a href="4020.html" class="portal-card blue">
+        <div class="card-image"><img src="AE-4020.png" alt="AE-4020"></div>
+        <div class="card-content">
+            <span style="color:#9CA3AF; font-size:0.85rem;">AUTION ELEVEN™</span>
+            <div class="product-title" style="color: var(--blue-brand);">AE-4020</div>
+            <p style="color:#6B7280;">半自動尿化學分析儀</p>
+            <div class="btn-enter">進入系統</div>
+        </div>
+    </a>
+</div>
+
+<footer>
+    醫兆股份有限公司 MedTri Co., Ltd. © 2024 Service Portal
+</footer>
+
+</body>
+</html>

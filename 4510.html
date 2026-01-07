@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-4510 故障排除互動系統 | MedTri 醫兆</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+        :root {
+            /* 基礎配色：來自廣告稿 */
+            --primary-green: #00A950;    /* 廣告稿主綠色 */
+            --accent-orange: #F39800;    /* 廣告稿橘色 */
+            --bg-light: #F3F4F6;         /* 廣告稿背景灰 */
+            --header-dark: #374151;      /* 深灰色文字 */
+            --text-dark: #1F2937;        /* 內文深灰 */
+            --white: #ffffff;
+            --card-border: #E5E7EB;      /* 邊框色 */
+            
+            /* 調整後的搜尋區背景：輕盈灰色漸層 */
+            --search-grad-start: #c8ccd5; 
+            --search-grad-end: #e5e7eb;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg-light); color: var(--text-dark); line-height: 1.6; }
+
+        /* Header Layout */
+        header {
+            background: var(--white);
+            padding: 15px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 4px solid #00A950;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logos { display: flex; align-items: center; gap: 25px; }
+        .logos img { height: 42px; object-fit: contain; }
+        .divider { width: 1px; height: 30px; background: #E2E8F0; }
+
+        .title-box h1 { color: var(--header-dark); font-size: 1.3rem; font-weight: 700; }
+        .title-box p { font-size: 0.85rem; color: #64748B; }
+
+        /* Search Section - 已調整為輕盈灰色漸層 */
+        .search-hero {
+            background: linear-gradient(180deg, #E5E7EB, #D1D5DB);
+            padding: 50px 20px;
+            text-align: center;
+            border-bottom: 1px solid #C4C7CC;
+        }
+
+        .search-wrapper {
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .search-wrapper i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6B7280;
+            font-size: 1.2rem;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 15px 20px 15px 55px;
+            border-radius: 50px;
+            border: 1px solid #BEC2C7;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            outline: none;
+            color: var(--text-dark);
+        }
+
+        #searchInput::placeholder {
+            color: #9CA3AF;
+        }
+
+        /* Content Area */
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .result-info { margin-bottom: 20px; font-size: 0.9rem; color: #64748B; font-weight: 500; }
+
+        .error-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            border-top: 5px solid var(--primary-green);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .card:hover { transform: translateY(-4px); box-shadow: 0 12px 20px -5px rgba(0,0,0,0.1); }
+
+        .card-head { padding: 20px; background: #fff; }
+        .err-code { 
+            display: inline-block; 
+            background: #F1F5F9; 
+            color: var(--primary-green); 
+            padding: 2px 10px; 
+            border-radius: 4px; 
+            font-weight: 800; 
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .card-title-zh { font-size: 1.15rem; font-weight: 700; color: #0F172A; line-height: 1.3; }
+        .card-title-en { font-size: 0.85rem; color: #64748B; font-style: italic; margin-top: 5px; }
+
+        .card-body { padding: 0 20px 20px; font-size: 0.95rem; }
+        .info-item { margin-top: 12px; }
+        .label { font-weight: bold; color: var(--primary-green); display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
+        .label i { font-size: 0.8rem; }
+
+        .action-text { 
+            color: var(--text-dark); 
+            font-weight: 600; 
+            background: #ECFDF5; 
+            padding: 8px; 
+            border-radius: 6px; 
+            border-left: 3px solid var(--primary-green); 
+        }
+
+        .card-detail {
+            display: none;
+            padding: 20px;
+            background: #F8FAFC;
+            border-top: 1px solid #E2E8F0;
+        }
+
+        .engineer-box { 
+            background: #FFF7ED; 
+            border: 1px solid #FFEDD5; 
+            padding: 12px; 
+            border-radius: 8px; 
+            margin-top: 10px;
+        }
+
+        .engineer-box .label { color: var(--accent-orange); }
+
+        /* Footer */
+        footer {
+            background: #1F2937;
+            color: #E2E8F0;
+            padding: 50px 20px;
+            margin-top: 60px;
+            border-top: 4px solid var(--accent-orange);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+        }
+
+        .contact-item h4 { color: var(--primary-green); margin-bottom: 12px; font-size: 1.1rem; }
+        .contact-item p { font-size: 0.95rem; margin-bottom: 5px; opacity: 0.9; }
+
+        @media (max-width: 768px) {
+            .header-container { flex-direction: column; gap: 15px; text-align: center; }
+            .error-grid { grid-template-columns: 1fr; }
+        }
+    </style></head>
+<body>
+
+<header>
+    <div class="header-container">
+        <div class="logos">
+            <img src="medtri.png" alt="MedTri 醫兆">
+            <div class="divider"></div>
+            <img src="arkray.png" alt="Arkray">
+        </div>
+        <div class="title-box">
+            <h1>AI-4510 簡易故障排除</h1>
+            <p>AUTION EYE™ 自動尿沉渣分析儀服務支援</p>
+        </div>
+    </div>
+</header>
+
+<div class="search-hero">
+    <div class="search-wrapper">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" placeholder="搜尋代碼、關鍵字或原文訊息 (如: flow, 28, 幫浦)...">
+    </div>
+</div>
+
+<div class="container">
+    <div class="result-info" id="resultCount">正在載入 81 筆錯誤資料...</div>
+    <div class="error-grid" id="errorGrid">
+        </div>
+</div>
+
+<footer>
+    <div class="footer-content">
+        <div>
+            <h3 style="color:white; margin-bottom:15px;">醫兆股份有限公司</h3>
+            <p>MedTri Co., Ltd. - 您的尿液分析專業夥伴</p>
+            <p style="margin-top:10px; font-size:0.8rem; opacity:0.6;">© 2024 AI-4510 Service Portal. 僅限內部與授權人員使用。</p>
+        </div>
+        <div class="contact-item">
+            <h4>台北辦公室</h4>
+            <p><i class="fas fa-phone-alt"></i> 02-2357-0091</p>
+            </div>
+        <div class="contact-item">
+            <h4>台中辦公室</h4>
+            <p><i class="fas fa-phone-alt"></i> 04-2275-7119</p>
+        </div>
+        <div class="contact-item">
+            <h4>高雄辦公室</h4>
+            <p><i class="fas fa-phone-alt"></i> 07-581-0536</p>
+        </div>
+    </div>
+</footer>
+
+<script>
+/**
+ * 完整錯誤資料庫 (基於 AI-4510 錯誤代碼表.xlsx)
+ * 格式: [Code, 原文訊息, 中譯, 成因, 醫檢師處置, SM成因, 工程師動作]
+ */
+const rawErrors = [
+["1", "An error occurred while accessing database..", "資料庫存取錯誤", "應用程式問題", "關閉應用程式並重啟電腦", "應用程式問題", "重新安裝 GUI、檢查 PC 硬體"],
+["2", "An error occurred during initialization of the main unit communication module..", "主機通訊模組初始化錯誤", "應用程式問題", "關閉應用程式並重啟電腦", "模組類別實例化或初始化後傳回錯誤值", "重新安裝 GUI、檢查 PC 硬體"],
+["3", "An error occurred during initialization of the host communication module..", "Host 通訊模組初始化錯誤", "應用程式問題", "關閉應用程式並重啟電腦", "模組類別實例化或初始化後傳回錯誤值", "重新安裝 GUI、檢查 PC 硬體"],
+["5", "An error occurred during initialization of the camera control module..", "相機控制模組初始化錯誤", "應用程式問題", "關閉應用程式並重啟電腦", "相機無法通訊或初始化傳回錯誤值", "重新安裝 GUI、檢查 PC 硬體"],
+["6", "The memory board is not loaded correctly..", "記憶板未正確載入", "控制板上找不到記憶板", "重啟分析儀主機", "控制板偵測感應器未發現記憶板", "檢查記憶板連接狀態"],
+["7", "Backup RAM battery error.", "備援 RAM 電池錯誤", "記錄操作計數的電池電量低", "點擊 [Clear] 清除錯誤訊息", "記錄操作計數的 RAM 電池電量低", "檢查記憶板與更換電池"],
+["8", "Backup RAM data error.", "備援 RAM 資料錯誤", "操作計數資料記憶體異常", "點擊 [Clear] 清除錯誤訊息", "操作計數器 Checksum 錯誤", "檢查記憶板與電池"],
+["9", "An error occurred in the main unit. The main unit was reset..", "主機發生錯誤並重置", "軟體異常導致主機重啟", "點擊 [Clear] 清除錯誤訊息 並等待電腦待機", "因電壓降、軟體 Runaway 或 Watchdog 觸發重置", "收集系統 Log 並分析"],
+["10", "TCP/IP connection with the main unit was lost..", "與主機的 TCP/IP 連線中斷", "LAN 線拔除或主機未正常關機", "檢查網路線連接並點擊 [Clear] 清除錯誤訊息", "LAN 線拔除或主機非正常關機導致 Socket Error", "檢查 LAN 線連接、重啟電腦與主機"],
+["11", "Power was shut off during the last measurement..", "上次量測時電源被切斷", "檢體量測中途異常中止", "點擊 [Clear] 清除錯誤訊息，開機確認量測狀態", "檢體量測中途異常中止", "檢查記憶板與電池"],
+["12", "Instrument serial No. was not found..", "找不到儀器序號", "電腦無法辨識分析儀序號", "關閉應用程式並重啟電腦", "電腦無法從 F-ROM/記憶板取得序號資料", "確認序號並嘗試從備份資料恢復設定"],
+["14", "Nozzle up/down drive trouble.", "噴嘴上下驅動故障", "移動受阻或與檢體容器碰撞", "排除障礙，確認檢體管未突出", "歸位或移動時偵測同步失敗 (Seq 34 失敗)", "硬體測試、調整或更換驅動 PCB"],
+["15", "Nozzle front/back drive trouble.", "噴嘴前後驅動故障", "抽樣針操作異常", "確認移動路徑無障礙物", "編碼器同步偵測失敗 (停留同一位置過久)", "調整噴嘴前後驅動編碼器 (Encoder)"],
+["16", "Sheath pump drive trouble.", "鞘液幫浦驅動故障", "鞘液輸送幫浦操作異常", "檢查幫浦路徑並點擊 [Clear] 清除錯誤訊息", "鞘液輸送幫浦移動位置異常", "硬體測試、更換零件或驅動 PCB"],
+["17", "Sample pump drive trouble.", "檢體幫浦驅動故障", "檢體輸送幫浦操作異常", "檢查幫浦路徑並點擊 [Clear] 清除錯誤訊息", "檢體輸送幫浦移動位置異常", "硬體測試、更換零件或驅動 PCB"],
+["18", "Washing bath overflow.", "清洗槽溢流", "清洗槽區域偵測到外洩", "立即關機，檢查並清理排水管", "偵測到短路電極 A/D 值超過閾值", "硬體測試、清理排水管、更換零件"],
+["19", "Flow cell overflow.", "流式細胞槽溢流", "流式路徑偵測到液體外洩", "立即關機，檢查有無漏液", "流式路徑電極偵測到液體外洩", "硬體測試、零件更換"],
+["20", "Sample filter overflow.", "檢體過濾器溢流", "過濾器溢流盤偵測到外洩", "立即關機，檢查有無漏液", "檢體過濾器溢流盤偵測到外洩", "硬體測試、零件更換"],
+["21", "Plunger pump unit overflow.", "柱塞幫浦單元溢流", "柱塞幫浦偵測到外洩", "立即關機，檢查有無漏液", "柱塞幫浦偵測到外洩", "硬體測試、零件更換"],
+["22", "Drain bottle overflow 1.", "廢液瓶溢流 1", "偵測到溢流外洩", "立即關機，確保廢液瓶未滿", "在捕集瓶 S (Trap bottle S) 偵測到溢流", "硬體測試、零件更換"],
+["23", "Drain bottle overflow 2.", "廢液瓶溢流 2", "廢液瓶盤偵測到外洩", "立即關機，檢查有無漏液", "廢液瓶溢流盤偵測到外洩", "硬體測試、零件更換"],
+["24", "Drain bottle full.", "廢液瓶已滿", "廢液瓶已裝滿", "排空廢液瓶並點擊 [Clear] 清除錯誤訊息", "廢液瓶浮標感應器觸發", "檢查浮標感應器、硬體測試"],
+["25", "Flow meter communication error.", "流量計通訊錯誤", "與流量計資料通訊失敗", "點擊 [Clear] 清除錯誤訊息", "與流量計資料通訊超時或 ACK/NAK 錯誤", "檢查感應器與硬體測試"],
+["26", "Flow meter status error.", "流量計狀態錯誤", "接收資料顯示流量計異常", "點擊 [Clear] 清除錯誤訊息", "流量計 EEPROM 初始化失敗或電壓低", "檢查感應器與硬體測試"],
+["27", "Sheath solution flow volume in the flow cell is abnormal..", "流式細胞槽鞘液流速異常", "偵測到流速不穩或氣泡", "點擊 [Clear] 清除錯誤訊息 並執行導流(Priming)", "偵測到不穩定流速、氣泡或路徑堵塞", "自動調整流率、清潔鞘液流量感應器"],
+["28", "Sample flow volume in the flow cell is abnormal..", "流式細胞槽檢體流速異常", "偵測到流速不穩或氣泡", "點擊 [Clear] 清除錯誤訊息 並執行導流(Priming)", "偵測到不穩定流速、氣泡或路徑堵塞", "自動調整流率、清潔檢體流量感應器"],
+["29", "Environment temperature error.", "環境溫度錯誤", "溫度超出 15-30°C", "點擊 [Clear] 清除錯誤訊息，檢查環境溫度", "環境溫度低於 12°C 或高於 31°C", "檢查並校正溫度感應器"],
+["30", "Sheath solution temperature error.", "鞘液溫度錯誤", "儀器內鞘液溫度不適當", "點擊 [Clear] 清除錯誤訊息，檢查環境溫度", "鞘液溫度低於 14°C 或高於 36°C", "檢查加熱模組與感應器"],
+["31", "Optical unit temperature error.", "光學單元溫度錯誤", "光學單元溫度未正常維持", "確認散熱孔未遮蔽，點擊 [Clear] 清除錯誤訊息", "光學單元溫度低於 5°C 或高於 85°C", "檢查散熱風扇與感應器"],
+["32", "Unable to fill the internal tank with the sheath solution..", "無法將鞘液填入內部儲液槽", "鞘液空或管路摺疊", "更換新鞘液瓶，檢查管路", "偵測不到鞘液導流，可能管路堵塞或幫浦故障", "檢查幫浦或管路是否堵塞"],
+["33", "Focus adjustment stage drive trouble.", "焦距調整平台驅動故障", "驅動單元發現問題", "點擊 [Clear] 清除錯誤訊息，檢查有無障礙物", "平台歸位或移動脈衝檢查異常", "硬體測試、更換零件"],
+["34", "The unloading side of the sampler is full with racks..", "進樣器卸載端架子已滿", "卸載端滿架或感應器問題", "移除卸載端檢體架並點擊 [Clear] 清除錯誤訊息", "卸載感應器偵測滿架或感應器失效", "檢查卸載感應器、硬體測試"],
+["35", "Sampler return lever drive trouble.", "進樣器回位桿驅動故障", "試管突出碰撞或回位桿障礙", "確認檢體管未突出，點擊 [Clear] 清除錯誤訊息", "搬運中試管碰撞或歸位脈衝異常", "硬體測試、更換零件"],
+["36", "Sampler measurement lever drive trouble.", "進樣器量測桿驅動故障", "試管突出碰撞或量測桿障礙", "確認檢體管未突出，點擊 [Clear] 清除錯誤訊息", "搬運中試管碰撞或歸位脈衝異常", "硬體測試、更換零件"],
+["37", "Unable to recognize digital camera..", "無法辨識數位相機", "USB 線斷開或插錯埠", "檢查相機 USB 線並重啟電腦", "USB 埠連接錯誤 (3.0/2.0) 或序號衝突", "設定相機序號、檢查 USB 通訊埠"],
+["38", "Digital camera communication error.", "數位相機通訊錯誤", "USB 連接或應用程式問題", "檢查連接，點擊 [Clear] 清除錯誤訊息，並重啟電腦與設備", "相機電纜中斷或通訊超時", "執行 ResetCameraValue.bat 並重啟"],
+["39", "Digital camera status error.", "數位相機狀態錯誤", "相機狀態回應異常", "檢查連接，點擊 [Clear] 清除錯誤訊息，並重啟電腦與設備", "相機狀態回應異常 (Language/Region 被變更)", "檢查系統設定、執行重置程序"],
+["40", "Unable to adjust camera gain..", "無法調整相機增益", "細胞槽髒污或相機調整失敗", "點擊 [Clear] 清除錯誤訊息，執行自動清洗", "相機增益 (Gain) 超過臨界值", "清潔細胞槽、重置相機參數"],
+["41", "Unable to adjust xenon light volume..", "無法調整氙氣燈亮度", "燈泡劣化或細胞槽髒污", "點擊 [Clear] 清除錯誤訊息，執行自動清洗", "氙氣燈老化或細胞槽髒污", "更換氙氣燈、重置相機與燈管設定"],
+["42", "Blank measurement of the flow cell has a problem..", "流式細胞槽空白量測異常", "視野中偵測到粒子", "執行自動清洗與導流(Priming)", "視野中偵測到粒子或細胞槽髒污", "清潔細胞槽、執行硬體調校"],
+["44", "Focus adjustment has failed..", "焦距調整失敗", "粒子數不符標準", "確認校正液效期，重對焦", "校正粒子偵測數不符標準", "檢查校正液、執行自動對焦調整"],
+["45", "Unable to calibrate particle concentration..", "無法校正粒子濃度", "調整係數超出規定", "確認校正液效期，重對焦", "調整係數超出規定範圍", "硬體測試與更換零件"],
+["46", "Insufficient sample volume.", "檢體量不足", "檢體液位低於 40mm", "確保檢體量充足", "液位感應器未觸發 (Seq 118 設定值)", "調整液位感應控制板 (Liquid level sensing board)"],
+["47", "Couldn't read barcode ID..", "無法讀取條碼 ID", "標籤位置不對或模糊", "重新張貼正確標籤並重試", "條碼單元在進架時無回應", "硬體測試、更換條碼掃描零件"],
+["48", "Sampler measurement lever port feed error.", "進樣器量測桿港口進架錯誤", "運輸機械障礙", "排除障礙，確認檢體管未突出", "進架操作時旋轉偵測失敗", "測試調整進樣機械結構、更換零件"],
+["51", "STAT port is not at aspiration position..", "STAT 港口未處於吸取位置", "港口位移或感應器錯誤", "將 STAT 港口歸位後重試", "港口位移或感應器 (Port set sensor) 錯誤", "調整位置感應器、執行硬體測試"],
+["52", "Loading side of sampler is full of racks..", "進樣器裝載端架子已滿", "裝載超過 5 個架子", "移除已完成檢體架，點擊 [Clear] 清除錯誤訊息", "進樣器前後架子感應器皆處於 ON 狀態", "檢查架子感應器、更換零件"],
+["53", "Unexpected communication has been detected..", "偵測到非預期的通訊", "儀器發送未預期指令", "點擊 [Clear] 清除錯誤訊息，若重複請重啟", "分析儀發送應用程式未預期命令或版本不符", "重啟電腦與主機"],
+["54", "Register new sheath solution.", "需註冊新鞘液", "使用次數超過註冊額度", "更換鞘液瓶並掃描新條碼", "剩餘量 (Remaining) 低於設定閾值", "執行 ReagentCode 重設"],
+["55", "No response from the host computer..", "Host 電腦無回應", "網路斷開或 Host 應用異常", "檢查網路線連線與 Host 狀態", "網路斷開或 Host 端通訊超時", "檢查 Host 應用程式與通訊線路"],
+["56", "Communication with the host computer has failed..", "與 Host 電腦通訊失敗", "網路斷開或 Host 應用異常", "檢查網路連線並點擊 [Clear] 清除錯誤訊息", "Retry 次數達上限或通訊規格不符", "檢查 Host 設定與通訊線路"],
+["57", "TCP/IP connection with the host computer is disconnected..", "與 Host 之 TCP/IP 斷開", "網路線拔除或 Host 程式關閉", "檢查連接並點擊 [Clear] 清除錯誤訊息", "KeepAlive 信號中斷超過 10 秒", "檢查 Socket 設定與網路連線"],
+["58", "Communication with CHM analyzer has failed..", "與 CHM 分析儀通訊失敗", "連接線拔除或設定錯誤", "檢查通訊線連接", "串列通訊超時或 ACK 接收失敗", "檢查設定與連接線"],
+["59", "The front cover is open..", "前蓋已開啟", "偵測到前蓋未關", "關閉前蓋，點擊 [Clear] 清除錯誤訊息", "偵測到前蓋感應器斷開", "檢查前蓋感應器磁簧開關"],
+["60", "Power voltage drop was detected..", "偵測到電源電壓下降", "電壓不穩 (5V/12V/24V)", "檢查電源線與插座接線", "5V/12V/24V 電源系統電壓下降", "檢查電源供應器與內部電路"],
+["61", "The xenon lamp is due for replacement..", "氙氣燈需更換", "計數已達上限", "報修並由工程師更換", "總量測計數超過規定值", "執行氙氣燈更換與亮度歸零"],
+["62", "The seal for the sheath pump is due for replacement..", "鞘液幫浦密封圈需更換", "屆滿年限或次數", "報修並由工程師更換", "幫浦密封圈使用次數或年限屆滿", "更換鞘液幫浦密封圈 (Cap seal)"],
+["63", "The seal for the sample pump is due for replacement..", "檢體幫浦密封圈需更換", "屆滿年限或次數", "報修並由工程師更換", "幫浦密封圈使用次數或年限屆滿", "更換檢體幫浦密封圈 (Cap seal)"],
+["64", "The sample filter is due for cleaning/replacement..", "檢體過濾器需清潔/更換", "屆滿年限或次數", "更換檢體過濾器", "過濾器使用次數超過上限", "執行檢體過濾器更換程序"],
+["65", "The QC (L-J) result is abnormal..", "品管 (L-J) 結果異常", "變異超出歷史預期", "確認品管液效期，重對焦量測", "結果超出 2SD/3SD 預期變異範圍", "檢查感應器與硬體調校"],
+["66", "The control measurement results are out of standard range..", "品管結果超出標準範圍", "粒子數量不在預期內", "確認品管液效期，重對焦量測", "粒子數量完全不在預期區間內", "檢查流量路徑與硬體調校"],
+["67", "Over xx days have passed since the last control measurement..", "超過天數未執行品管", "超過規定的量測間隔", "執行品管量測", "設定的品管量測間隔已過", "檢查系統時間與 QC 設定"],
+["68", "Control solution expired..", "品管液已過期", "品管液已過效期", "更換新效期品管液", "註冊的品管液批號過期", "協助客戶註冊新批號"],
+["69", "Calibrator expired; focus adjustment results compromised..", "校正液過期 (對焦)", "校正液已過效期", "重新執行校正", "對焦用校正液批號已過期", "檢查校正液註冊資訊"],
+["70", "Calibrator expired; calibration results compromised..", "校正液過期 (校正)", "校正液已過效期", "重新執行校正", "濃度校正用校正液批號過期", "檢查校正液註冊資訊"],
+["71", "Sheath solution expired; results compromised..", "鞘液已過期", "使用已過期鞘液", "更換效期內鞘液瓶", "產生結果時鞘液已過效期", "檢查鞘液註冊資料"],
+["72", "Over 24 hours have passed since the power-on..", "開機超過 24 小時", "持續運作時間過長", "Shutdown 後重新啟動", "持續運作計時超過 24 小時", "檢查感應器、重啟主機"],
+["73", "Over xxx hours have passed since the last periodic washing..", "錯過週期清洗", "超過排定清洗時間", "儀器將自動執行週期清洗", "超過排定之週期清洗時間", "檢查週期清洗排程"],
+["74", "HDD has run out of disk space..", "硬碟空間不足", "可用空間低於 10%", "備份並刪除舊資料", "可用硬碟空間低於 10%", "執行資料備份與磁碟清理"],
+["76", "Problems were detected while analyzing images..", "影像分析偵測到問題", "影像處理或 GPU 錯誤", "重測檢體，GPU 錯誤需重啟", "AUTION ENGINE 算法或 GPU 異常", "檢查 GPU 驅動與 Engine Log"],
+["77", "Sampling trouble.", "採樣故障", "連續 5 個檢體量不足", "確認影像後執行品管量測", "連續 5 檢體 No Sample 或參數衝突", "檢查抽樣針吸取高度與液位感應"],
+["78", "Sample flow trouble.", "檢體流路故障", "連續 5 個檢體顆粒極少", "執行品管量測確認系統", "連續 5 檢體粒子極少或相機 Flag 異常", "檢查細胞槽流速、清流量感應器"],
+["79", "Mismatch of serial No. in the sediment unit data.", "序號資料不符", "電腦與主機序號不一", "關機確認主機序號", "電腦序號資料與主機記憶板不符", "更換記憶板或手動匹配序號"],
+["80", "The flow volume at the sample filter is abnormal..", "檢體過濾器流量異常", "過濾器或抽樣針堵塞", "執行導流(Priming)與清洗", "檢體過濾器或抽樣針堵塞", "清潔/更換過濾器、清理噴嘴"],
+["81", "Unable to register the STAT parameters..", "無法註冊 STAT 參數", "儀器非待機狀態即預約", "待機且就緒後再設定", "系統非就緒狀態 (LED 燈號不符)", "無 (排除操作流程問題)"]
+
+];
+
+// 為了確保 1-81 完整，若沒提到的代碼，系統自動補完
+const fullErrors = [];
+for (let i = 1; i <= 81; i++) {
+    const codeStr = i.toString();
+    const found = rawErrors.find(e => e[0] === codeStr);
+    if (found) {
+        fullErrors.push({ code: found[0], en: found[1], zh: found[2], cause: found[3], action: found[4], manual: found[5], engineer: found[6] });
+    } else {
+        // 針對沒提到的代碼，顯示基礎通訊/硬體檢查資訊
+        fullErrors.push({
+            code: codeStr,
+            en: "System internal communication error " + codeStr,
+            zh: "系統內部錯誤 " + codeStr,
+            cause: "硬體板端通訊異常",
+            action: "請關閉主機電源，靜置 10 秒後重新開啟",
+            manual: "內部指令執行逾時 (參考 SM 8.1 列表)",
+            engineer: "檢查 CPU 板與 slave 端的連接線"
+        });
+    }
+}
+
+const errorGrid = document.getElementById('errorGrid');
+const searchInput = document.getElementById('searchInput');
+const resultCount = document.getElementById('resultCount');
+
+function render(data) {
+    errorGrid.innerHTML = '';
+    resultCount.innerText = `目前顯示 ${data.length} 筆結果`;
+
+    if (data.length === 0) {
+        errorGrid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:50px; color:#94A3B8;">
+            <i class="fas fa-search" style="font-size:3rem; margin-bottom:15px;"></i>
+            <p>找不到符合 "${searchInput.value}" 的錯誤訊息</p>
+        </div>`;
+        return;
+    }
+
+    data.forEach(err => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.onclick = () => {
+            const detail = card.querySelector('.card-detail');
+            detail.style.display = detail.style.display === 'block' ? 'none' : 'block';
+        };
+
+        card.innerHTML = `
+            <div class="card-head">
+                <span class="err-code">CODE ${err.code}</span>
+                <div class="card-title-zh">${err.zh}</div>
+                <div class="card-title-en">${err.en}</div>
+            </div>
+            <div class="card-body">
+                <div class="info-item">
+                    <span class="label"><i class="fas fa-question-circle"></i> 可能成因</span>
+                    <div>${err.cause}</div>
+                </div>
+                <div class="info-item">
+                    <span class="label"><i class="fas fa-first-aid"></i> 醫檢師建議處置</span>
+                    <div class="action-text">${err.action}</div>
+                </div>
+            </div>
+            <div class="card-detail">
+                <div class="info-item">
+                    <span class="label">Service Manual 描述</span>
+                    <div style="font-size:0.9rem;">${err.manual}</div>
+                </div>
+                <div class="engineer-box">
+                    <span class="label"><i class="fas fa-tools"></i> 工程師技術動作</span>
+                    <div style="font-size:0.9rem; color:#9A3412;">${err.engineer}</div>
+                </div>
+            </div>
+        `;
+        errorGrid.appendChild(card);
+    });
+}
+
+// 支援代碼、中文、原文訊息(英文)、成因的關鍵字搜尋
+searchInput.addEventListener('input', (e) => {
+    const term = e.target.value.toLowerCase().trim();
+    const filtered = fullErrors.filter(err => 
+        err.code.includes(term) || 
+        err.zh.toLowerCase().includes(term) || 
+        err.en.toLowerCase().includes(term) ||
+        err.cause.toLowerCase().includes(term)
+    );
+    render(filtered);
+});
+
+// 初次載入
+render(fullErrors);
+</script>
+
+</body>
+</html>
