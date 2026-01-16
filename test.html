@@ -3,207 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI-4510 故障排除支援系統 | 醫兆股份有限公司</title>
+    <title>AI-4510 簡易故障排除 | MedTri 醫兆</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-blue: #005696; /* 參考廣告稿深藍色 */
-            --secondary-blue: #00AEEF;
+            --primary-green: #00A950;
             --accent-orange: #F39800;
-            --bg-light: #f8f9fa;
-            --text-dark: #333;
-            --card-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            --software-color: #6c757d;
-            --hardware-color: #dc3545;
-            --comm-color: #17a2b8;
-            --maintenance-color: #28a745;
+            --bg-light: #F3F4F6;
+            --header-dark: #374151;
+            --text-dark: #1F2937;
+            --white: #fff;
+            --card-border: #E5E7EB;
+            --sm-label-cyan: #33cccc; /* 詳細維修資訊欄位名稱顏色 */
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg-light); color: var(--text-dark); line-height: 1.6; }
 
-        body {
-            font-family: 'Noto Sans TC', sans-serif;
-            background-color: var(--bg-light);
-            color: var(--text-dark);
-            line-height: 1.6;
-        }
-
-        /* Header & Logo */
         header {
-            background: white;
-            padding: 20px;
-            border-bottom: 4px solid var(--primary-blue);
-            box-shadow: var(--card-shadow);
+            background: var(--white);
+            padding: 12px 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.05);
             position: sticky;
             top: 0;
             z-index: 1000;
+            border-bottom: 3px solid var(--primary-green);
         }
 
-        .header-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .header-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        
+        .logos-area { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+        .logos { display: flex; align-items: center; gap: 10px; }
+        .logos a { display: flex; align-items: center; }
+        .logos img { height: 28px; object-fit: contain; }
+        
+        .header-titles {
+            margin-left: 10px;
+            border-left: 1px solid #ddd;
+            padding-left: 10px;
         }
-
-        .logo-area h1 {
-            color: var(--primary-blue);
-            font-size: 1.5rem;
-            margin-bottom: 5px;
-        }
-
-        .logo-area span {
-            font-size: 0.9rem;
-            color: #666;
-            letter-spacing: 1px;
-        }
-
-        /* Search & Filter Section */
-        .control-panel {
-            max-width: 1200px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-
-        .search-wrapper {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: var(--card-shadow);
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
-        }
-
-        .input-group { position: relative; }
-
-        .input-group i {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #aaa;
-        }
-
-        input[type="text"], select {
-            width: 100%;
-            padding: 12px 12px 12px 45px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
+        .header-titles h1 {
             font-size: 1rem;
-            transition: all 0.3s;
-        }
-
-        input[type="text"]:focus {
-            border-color: var(--secondary-blue);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(0,174,239,0.1);
-        }
-
-        /* Error Cards */
-        .error-grid {
-            max-width: 1200px;
-            margin: 0 auto 50px;
-            padding: 0 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 20px;
-        }
-
-        .error-card {
-            background: white;
-            border-radius: 12px;
-            border-left: 6px solid #ccc;
-            padding: 20px;
-            box-shadow: var(--card-shadow);
-            transition: transform 0.2s;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .error-card:hover { transform: translateY(-5px); }
-
-        .error-card.software { border-left-color: var(--software-color); }
-        .error-card.hardware { border-left-color: var(--hardware-color); }
-        .error-card.comm { border-left-color: var(--comm-color); }
-        .error-card.maintenance { border-left-color: var(--maintenance-color); }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 15px;
-        }
-
-        .error-code {
-            background: #eee;
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-weight: bold;
-            font-family: monospace;
-            color: var(--primary-blue);
-        }
-
-        .error-msg-zh {
-            font-size: 1.1rem;
+            color: var(--header-dark);
             font-weight: 700;
-            color: #000;
-            margin-bottom: 5px;
+            margin: 0;
+            line-height: 1.2;
+        }
+        .header-titles p {
+            font-size: 0.7rem;
+            color: #6b7280;
+            margin: 2px 0 0 0;
         }
 
-        .error-msg-en {
-            font-size: 0.85rem;
-            color: #666;
-            font-style: italic;
+        .nav-links { display: flex; gap: 8px; align-items: center; }
+        .nav-btn {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            border: 1px solid var(--card-border);
+            color: var(--header-dark);
+            background: #fff;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+        .nav-btn:hover { background: #f3f4f6; }
+        
+        .nav-btn-orange {
+            background: var(--accent-orange);
+            color: #fff;
+            border-color: var(--accent-orange);
+        }
+        .nav-btn-orange:hover { background: #e68a00; border-color: #e68a00; color: #fff; }
+
+        .container { max-width: 1200px; margin: 20px auto; padding: 0 15px; }
+
+        .search-container { margin-bottom: 20px; position: relative; }
+        #searchInput {
+            width: 100%; padding: 12px 45px; border-radius: 12px;
+            border: 1px solid var(--card-border); font-size: 1rem; outline: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        #searchInput:focus { border-color: var(--primary-green); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .search-icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 1.1rem; }
+
+        .error-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); 
+            gap: 15px; 
+        }
+        
+        .error-card {
+            background: var(--white); border-radius: 15px; overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,.04); border: 1px solid var(--card-border);
+            cursor: pointer; transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            border-top: 5px solid var(--primary-green);
+        }
+        .error-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+
+        .card-header { 
+            padding: 10px 15px; 
+            background: #f1f5f9; 
+            border-bottom: 1px solid var(--card-border); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+        .error-code { 
+            font-weight: 800; 
+            color: var(--primary-green);
+            font-size: 0.9rem; 
+            letter-spacing: 0.5px;
+        }
+        
+        .card-body { padding: 15px; flex-grow: 1; }
+        .error-title { font-size: 1.1rem; font-weight: 700; color: var(--text-dark); margin-bottom: 5px; }
+        .error-sub { font-size: 0.85rem; color: #6b7280; margin-bottom: 12px; font-style: italic; line-height: 1.4; }
+
+        .info-row { margin-bottom: 10px; }
+        .label { display: block; font-size: 0.75rem; color: #6b7280; font-weight: 600; margin-bottom: 2px; }
+        .action-text { color: var(--primary-green); font-weight: 500; white-space: pre-line; font-size: 0.9rem; }
+
+        .card-detail { display: none; padding: 0 15px 15px; border-top: 1px solid #f3f4f6; background: #fafafa; }
+        .info-item { margin-top: 12px; }
+        
+        .engineer-box {
+            background: #FFF7ED; padding: 10px; border-radius: 8px;
+            margin-top: 12px; border-left: 4px solid var(--accent-orange);
         }
 
-        .detail-section {
-            display: none;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px dashed #eee;
-            font-size: 0.95rem;
+        .manual-toggle-btn {
+            width: 100%; margin-top: 15px; padding: 12px;
+            background: #fff; border: 1px solid #cbd5e1; border-radius: 8px;
+            color: #475569; font-size: 0.85rem; font-weight: 600;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
         }
 
-        .detail-item { margin-bottom: 10px; }
-        .detail-label {
-            font-weight: bold;
-            color: var(--primary-blue);
-            display: block;
-            margin-bottom: 2px;
+        .service-manual-detail {
+            display: none; margin-top: 12px; padding: 12px;
+            background: #fff; border: 1px solid #e2e8f0; border-radius: 10px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
         }
+        .service-manual-detail.show { display: block; }
 
-        .highlight { background: yellow; padding: 0 2px; border-radius: 2px; }
-
-        /* Contact Footer */
-        footer {
-            background: var(--primary-blue);
-            color: white;
-            padding: 40px 20px;
-            margin-top: 50px;
+        .sm-item { margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid #f1f5f9; }
+        .sm-item:last-child { border-bottom: none; margin-bottom: 0; }
+        
+        .sm-label { 
+            display: flex; 
+            align-items: center; 
+            gap: 8px;
+            font-size: 0.78rem; 
+            font-weight: 700; 
+            color: var(--sm-label-cyan);
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
+            margin-bottom: 4px;
         }
-
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            text-align: center;
+        .sm-label i { width: 14px; text-align: center; font-size: 0.85rem; }
+        
+        .sm-value { 
+            font-size: 0.88rem; 
+            color: #334155; 
+            white-space: pre-line; 
+            word-break: break-word; 
+            padding-left: 22px; 
         }
+        
+        .no-data { color: #cbd5e1; font-style: italic; }
 
-        .contact-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-top: 20px;
+        footer { 
+            text-align: center; 
+            padding: 40px 20px; 
+            background: #fff;
+            color: #4b5563; 
+            font-size: 0.85rem; 
+            border-top: 1px solid var(--card-border); 
+            margin-top: 40px; 
+            line-height: 1.8;
         }
+        .footer-company { font-weight: 700; font-size: 1rem; color: var(--header-dark); }
+        .footer-slogan { color: var(--primary-green); margin-bottom: 10px; font-weight: 500; }
+        .footer-offices { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 15px; color: #6b7280; }
+        .office-item { display: flex; align-items: center; gap: 5px; }
+        .footer-copy { margin-top: 15px; font-size: 0.75rem; color: #9ca3af; }
 
-        .contact-box i { font-size: 1.2rem; margin-bottom: 10px; }
-
+        /* 行動裝置優化：標題不隱藏，而是調整排列 */
         @media (max-width: 768px) {
-            .search-wrapper { grid-template-columns: 1fr; }
-            .contact-grid { grid-template-columns: 1fr; }
+            .header-container { flex-direction: column; align-items: flex-start; padding: 10px 0; }
+            .header-titles { border-left: none; padding-left: 0; margin-left: 0; margin-top: 5px; }
+            .header-titles h1 { font-size: 1.1rem; }
+            .header-titles p { font-size: 0.75rem; }
+            .nav-links { width: 100%; justify-content: flex-start; margin-top: 12px; }
             .error-grid { grid-template-columns: 1fr; }
+            .footer-offices { flex-direction: column; gap: 5px; align-items: center; }
+        }
+
+        @media (max-width: 480px) {
+            .header-titles h1 { font-size: 1rem; }
+            .header-titles p { font-size: 0.7rem; }
+            .nav-btn { padding: 6px 12px; font-size: 0.75rem; }
         }
     </style>
 </head>
@@ -211,160 +218,340 @@
 
 <header>
     <div class="header-container">
-        <div class="logo-area">
-            <h1><i class="fas fa-microscope"></i> AI-4510 故障排除手冊</h1>
-            <span>MED TRIM 醫兆股份有限公司 - 專業售後支援</span>
+        <div class="logos-area">
+            <div class="logos">
+                <a href="test.html">
+                    <img src="medtri.png" alt="MedTri" onerror="this.src='https://placehold.co/100x30?text=MedTri'">
+                </a>
+                <img src="arkray.png" alt="Arkray" onerror="this.src='https://placehold.co/100x30?text=Arkray'">
+            </div>
+            <div class="header-titles">
+                <h1>AI-4510 簡易故障排除</h1>
+                <p>AUTION EYE™ 自動尿沉渣分析儀服務支援</p>
+            </div>
         </div>
-        <div class="header-tools">
-            <button onclick="window.print()" style="padding: 8px 15px; cursor: pointer; border-radius: 5px; border: 1px solid #ccc;"><i class="fas fa-print"></i> 列印</button>
+        <div class="nav-links">
+            <a href="test.html" class="nav-btn"><i class="fas fa-home"></i> <span>首頁</span></a>
+            <a href="#" class="nav-btn nav-btn-orange"><i class="fas fa-exchange-alt"></i> <span>切換 AX-4060</span></a>
         </div>
     </div>
 </header>
 
-<div class="control-panel">
-    <div class="search-wrapper">
-        <div class="input-group">
-            <i class="fas fa-search"></i>
-            <input type="text" id="searchInput" placeholder="搜尋代碼、訊息或關鍵字 (例: 資料庫, 幫浦)...">
-        </div>
-        <select id="categoryFilter">
-            <option value="all">所有類型</option>
-            <option value="software">軟體 / 系統 (Software)</option>
-            <option value="hardware">硬體 / 機械 (Hardware)</option>
-            <option value="comm">通訊 (Comm)</option>
-            <option value="maintenance">維護 / 消耗品 (Maintenance)</option>
-        </select>
+<div class="container">
+    <div class="search-container">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" id="searchInput" placeholder="輸入代碼、關鍵字或錯誤名稱查詢...">
     </div>
-    <div id="resultCount" style="margin-top: 15px; color: #666; font-size: 0.9rem;"></div>
+
+    <div id="errorGrid" class="error-grid"></div>
 </div>
 
-<div class="error-grid" id="errorGrid">
+<footer>
+    <div class="footer-company">醫兆股份有限公司</div>
+    <div class="footer-slogan">MedTri Co., Ltd. - 您的尿液分析專業夥伴</div>
+    
+    <div class="footer-offices">
+        <div class="office-item"><i class="fas fa-map-marker-alt"></i> 台北辦公室 02-2357-0091</div>
+        <div class="office-item"><i class="fas fa-map-marker-alt"></i> 台中辦公室 04-2275-7119</div>
+        <div class="office-item"><i class="fas fa-map-marker-alt"></i> 高雄辦公室 07-581-0536</div>
     </div>
 
-<footer>
-    <div class="footer-content">
-        <h3>醫兆股份有限公司 Med Trim Co., Ltd.</h3>
-        <p>如有任何疑問或需到場維修，請聯繫各區辦公室</p>
-        <div class="contact-grid">
-            <div class="contact-box">
-                <i class="fas fa-map-marker-alt"></i><br>
-                台北：02-2357-0091
-            </div>
-            <div class="contact-box">
-                <i class="fas fa-map-marker-alt"></i><br>
-                台中：04-2275-7119
-            </div>
-            <div class="contact-box">
-                <i class="fas fa-map-marker-alt"></i><br>
-                高雄：07-581-0536
-            </div>
-        </div>
-        <p style="margin-top: 30px; font-size: 0.8rem; opacity: 0.7;">© 2026 AI-4510 Service Assistant Program</p>
+    <div class="footer-copy">
+        © 2024 AI-4510 Service Portal. 僅限內部與授權人員使用。<br>
+        AUTION EYE is a trademark of ARKRAY, Inc.
     </div>
 </footer>
 
 <script>
-    // 完整的錯誤資料庫 (基於提供之 Excel/CSV)
-    const errorData = [
-        { code: "1", en: "An error occurred while accessing database.", zh: "資料庫存取錯誤", cause: "應用程式問題", action: "關閉應用程式並重啟電腦", manual: "應用程式問題", engineer: "重新安裝 GUI 軟體、檢查 PC 硬體", cat: "software" },
-        { code: "2", en: "An error occurred during initialization of the main unit communication module.", zh: "主機通訊模組初始化錯誤", cause: "應用程式問題", action: "關閉應用程式並重啟電腦", manual: "主機通訊模組初始化傳回錯誤值", engineer: "重新安裝 GUI、檢查 PC 硬體", cat: "comm" },
-        { code: "5", en: "An error occurred during initialization of the camera control module.", zh: "相機控制模組初始化錯誤", cause: "應用程式問題", action: "關閉應用程式並重啟電腦", manual: "數位相機控制模組類別實例化失敗", engineer: "重新安裝 GUI、檢查 PC 硬體", cat: "hardware" },
-        { code: "6", en: "The memory board is not correctly loaded.", zh: "記憶板未正確載入", cause: "控制板上找不到記憶板", action: "重啟分析儀主機", manual: "偵測感應器未偵測到記憶板", engineer: "檢查記憶板連接狀態", cat: "hardware" },
-        { code: "10", en: "Syringe/pump initial position error", zh: "針筒/幫浦初始位置錯誤", cause: "馬達或感應器障礙", action: "檢查管路是否卡住並重啟", manual: "馬達移動至原點超時", engineer: "檢查馬達驅動器與原點感應器", cat: "hardware" },
-        { code: "20", en: "Pressure sensor error", zh: "壓力感應器錯誤", cause: "氣路異常或感應器損壞", action: "檢查廢液桶與壓力閥", manual: "偵測到壓力值超出正常區間", engineer: "更換壓力感應器、檢查氣密性", cat: "hardware" },
-        { code: "30", en: "Barcode reader error", zh: "條碼掃描器錯誤", cause: "鏡頭髒污或硬體故障", action: "清潔掃描器窗口", manual: "通訊正常但讀取失敗次數過多", engineer: "重新校準條碼讀取角度", cat: "hardware" },
-        { code: "40", en: "Light source intensity low", zh: "光源強度不足", cause: "燈泡壽命將盡", action: "執行光源自動校準", manual: "LED 電流達到補償上限", engineer: "更換 LED 光源模組", cat: "maintenance" },
-        { code: "50", en: "Sheath liquid empty", zh: "稀釋液/鞘流液耗盡", cause: "耗材已空", action: "補給稀釋液並執行 Filling", manual: "液位感應器觸發", engineer: "檢查浮球感應器電路", cat: "maintenance" },
-        { code: "63", en: "Cap seal replacement", zh: "密封圈 (Cap seal) 更換", cause: "屆滿年限或次數", action: "更換密封圈", manual: "密封圈使用次數超過上限", engineer: "執行耗材更換計數重置", cat: "maintenance" },
-        { code: "81", en: "Communication timeout with Host PC", zh: "與主機 PC 通訊逾時", cause: "網路線鬆脫或防火牆阻擋", action: "檢查 LAN 線連接", manual: "ACK 指令未在規定時間內回傳", engineer: "檢查網路卡設定與 TCP/IP 通訊", cat: "comm" }
-        // ... 此處簡化處理，實際應用請將 81 筆資料全數貼入此陣列
+    // 原始中文介面資料 (81 筆)
+    const rawErrors = [
+        ["1","An error occurred while accessing database..","資料庫存取錯誤","應用程式問題","請關閉應用程式並重新啟動 PC。\n=> 若錯誤重複發生，請在「錯誤清單畫面」確認其代碼並通報售後服務中心。","應用程式問題","重新安裝 GUI、檢查 PC 硬體等。"],
+        ["2","An error occurred during initialization of the main unit communication module..","主機通訊模組初始化錯誤","應用程式問題","關閉應用程式並重啟電腦","模組類別實例化或初始化後傳回錯誤值","重新安裝 GUI、檢查 PC 硬體"],
+        ["3","An error occurred during initialization of the host communication module..","Host 通訊模組初始化錯誤","應用程式問題","關閉應用程式並重啟電腦","模組類別實例化或初始化後傳回錯誤值","重新安裝 GUI、檢查 PC 硬體"],
+        ["5","An error occurred during initialization of the camera control module..","相機控制模組初始化錯誤","應用程式問題","關閉應用程式並重啟電腦","相機無法通訊或初始化傳回錯誤值","重新安裝 GUI、檢查 PC 硬體"],
+        ["6","The memory board is not loaded correctly..","記憶板未正確載入","控制板上找不到記憶板","重啟分析儀主機","控制板偵測感應器未發現記憶板","檢查記憶板連接狀態"],
+        ["7","Backup RAM battery error.","備援 RAM 電池錯誤","偵測到儀器內紀錄操作次數的記憶體電池電量過低","點擊 [Clear] 清除錯誤訊息","偵測到儀器內紀錄操作次數的記憶體電池電量過低","檢查記憶板與更換電池"],
+        ["8","Backup RAM data error.","備援 RAM 資料錯誤","偵測到儀器內紀錄操作次數的資料記憶體發生問題","點擊 [Clear] 清除錯誤訊息","偵測到儀器內紀錄操作次數的資料記憶體發生問題","檢查記憶板與電池"],
+        ["9","An error occurred in the main unit. The main unit was reset..","主機發生錯誤並重置","軟體異常導致主機重啟","點擊 [Clear] 清除錯誤訊息 並等待電腦待機","因電壓降、軟體 Runaway 或 Watchdog 觸發重置","收集系統 Log 並分析"],
+        ["10","TCP/IP connection with the main unit was lost..","與主機的 TCP/IP 連線中斷","LAN 線拔除或主機未正常關機","檢查網路線連接並點擊 [Clear] 清除錯誤訊息","LAN 線拔除或主機非正常關機導致 Socket Error","檢查 LAN 線連接、重啟電腦與主機"],
+        ["11","Power was shut off during the last measurement..","上次量測時電源被切斷","檢體量測中途異常中止","點擊 [Clear] 清除錯誤訊息,開機確認量測狀態","檢體量測中途異常中止","檢查電力系統相關部件"],
+        ["12","Instrument serial No. was not found..","找不到儀器序號","電腦無法辨識分析儀序號","關閉應用程式並重啟電腦","電腦無法從 F-ROM/記憶板取得序號資料","確認序號並嘗試從備份資料恢復設定"],
+        ["14","Nozzle up/down drive trouble.","噴嘴上下驅動故障","移動受阻或與檢體容器碰撞","排除障礙,確認檢體管未突出","歸位或移動時偵測同步失敗 (Seq 34 失敗)","硬體測試、調整或更換驅動馬達"],
+        ["15","Nozzle front/back drive trouble.","噴嘴前後驅動故障","噴嘴前後移動異常","確認移動路徑無障礙物","home senosr or 馬達故障","調整噴嘴前後位置和確認馬達皮帶"],
+        ["16","Sheath pump drive trouble.","鞘液幫浦驅動故障","鞘液輸送幫浦操作異常","檢查幫浦路徑並點擊 [Clear] 清除錯誤訊息","鞘液輸送幫浦移動位置異常","硬體測試、更換零件或驅動 PCB"],
+        ["17","Sample pump drive trouble.","檢體幫浦驅動故障","檢體輸送幫浦操作異常","檢查幫浦路徑並點擊 [Clear] 清除錯誤訊息","檢體輸送幫浦移動位置異常","硬體測試、更換零件或驅動 PCB"],
+        ["18","Washing bath overflow.","清洗槽溢流","清洗槽區域偵測到外洩","立即關機,檢查並清理排水管","排水系統發生異常","清理檢查排水系統、更換零件"],
+        ["19","Flow cell overflow.","流式細胞槽溢流","流式路徑偵測到液體外洩","立即關機,檢查有無漏液","流式路徑電極偵測到液體外洩","水路測試、零件更換"],
+        ["20","Sample filter overflow.","檢體過濾器溢流","過濾器溢流盤偵測到外洩","立即關機,檢查有無漏液","檢體過濾器溢流盤偵測到外洩","水路測試、零件更換"],
+        ["21","Plunger pump unit overflow.","柱塞幫浦單元溢流","柱塞幫浦偵測到外洩","立即關機,檢查有無漏液","柱塞幫浦偵測到外洩","水路測試、零件更換"],
+        ["22","Drain bottle overflow 1.","廢液瓶溢流 1","偵測到溢流外洩","立即關機,確保廢液瓶未滿","在收集瓶 S (Trap bottle S) 偵測到溢流","水路測試、零件更換"],
+        ["23","Drain bottle overflow 2.","廢液瓶溢流 2","廢液瓶盤偵測到外洩","立即關機,檢查有無漏液","廢液瓶溢流盤偵測到外洩","水路測試、零件更換"],
+        ["24","Drain bottle full.","廢液瓶已滿","廢液瓶已裝滿","排空廢液瓶並點擊 [Clear] 清除錯誤訊息","廢液瓶浮標感應器觸發","檢查浮標感應器、水路測試"],
+        ["25","Flow meter communication error.","流量計通訊錯誤","與流量計資料通訊失敗","點擊 [Clear] 清除錯誤訊息","與流量計資料通訊超時或 ACK/NAK 錯誤","檢查感應器與硬體測試"],
+        ["26","Flow meter status error.","流量計狀態錯誤","接收資料顯示流量計異常","點擊 [Clear] 清除錯誤訊息","流量計 EEPROM 初始化失敗或電壓低","檢查感應器與硬體測試"],
+        ["27","Sheath solution flow volume in the flow cell is abnormal..","流式細胞槽鞘液流速異常","偵測到流速不穩或氣泡","點擊 [Clear] 清除錯誤訊息 並執行導流(Priming)","偵測到不穩定流速、氣泡或路徑堵塞","自動調整流率、清潔鞘液流量感應器"],
+        ["28","Sample flow volume in the flow cell is abnormal..","流式細胞槽檢體流速異常","偵測到流速不穩或氣泡","點擊 [Clear] 清除錯誤訊息 並執行導流(Priming)","偵測到不穩定流速、氣泡或路徑堵塞","自動調整流率、清潔檢體流量感應器"],
+        ["29","Environment temperature error.","環境溫度錯誤","溫度超出 15-30°C","點擊 [Clear] 清除錯誤訊息,檢查環境溫度","環境溫度低於 12°C 或高於 31°C","檢查並校正溫度感應器"],
+        ["30","Sheath solution temperature error.","鞘液溫度錯誤","儀器內鞘液溫度不適當","點擊 [Clear] 清除錯誤訊息,檢查環境溫度","鞘液溫度低於 14°C 或高於 36°C","檢查加熱模組與感應器"],
+        ["31","Optical unit temperature error.","光學單元溫度錯誤","光學單元溫度未正常維持","確認散熱孔未遮蔽,點擊 [Clear] 清除錯誤訊息","光學單元溫度低於 5°C 或高於 85°C","檢查散熱風扇與感應器"],
+        ["32","Unable to fill the internal tank with the sheath solution..","無法將鞘液填入內部儲液槽","鞘液空或管路摺疊","更換新鞘液瓶,檢查管路","偵測不到鞘液導流,可能管路堵塞或幫浦故障","檢查幫浦或管路是否堵塞"],
+        ["33","Focus adjustment stage drive trouble.","焦距調整平台驅動故障","驅動單元發現問題","點擊 [Clear] 清除錯誤訊息,檢查有無障礙物","平台歸位或移動脈衝檢查異常","硬體測試、更換零件"],
+        ["34","The unloading side of the sampler is full with racks..","進樣器卸載端架子已滿","卸載端滿架或感應器問題","移除卸載端檢體架並點擊 [Clear] 清除錯誤訊息","卸載感應器偵測滿架或感應器失效","檢查卸載端感應器、硬體測試"],
+        ["35","Sampler return lever drive trouble.","進樣器回位桿驅動故障","試管突出碰撞或回位桿障礙","確認檢體管未突出,點擊 [Clear] 清除錯誤訊息","搬運中試管碰撞或歸位脈衝異常","硬體測試、更換零件"],
+        ["36","Sampler measurement lever drive trouble.","進樣器量測桿驅動故障","試管突出碰撞或量測桿障礙","確認檢體管未突出,點擊 [Clear] 清除錯誤訊息","搬運中試管碰撞或歸位脈衝異常","硬體測試、更換零件"],
+        ["37","Unable to recognize digital camera..","無法辨識數位相機","USB 線斷開或插錯埠","檢查相機 USB 線並重啟電腦","USB 埠連接錯誤 (3.0/2.0) 或序號衝突","設定相機序號、檢查 USB 通訊埠"],
+        ["38","Digital camera communication error.","數位相機通訊錯誤","USB 連接或應用程式問題","檢查連接,點擊 [Clear] 清除錯誤訊息,並重啟電腦與設備","相機電纜中斷或通訊超時","執行 ResetCameraValue.bat 並重啟"],
+        ["39","Digital camera status error.","數位相機狀態錯誤","相機狀態回應異常","檢查連接,點擊 [Clear] 清除錯誤訊息,並重啟電腦與設備","相機狀態回應異常 (Language/Region 被變更)","檢查系統設定、執行重置程序"],
+        ["40","Unable to adjust camera gain..","無法調整相機增益","細胞槽髒污或相機調整失敗","點擊 [Clear] 清除錯誤訊息,執行自動清洗","相機增益 (Gain) 超過臨界值","清潔細胞槽、重置相機參數"],
+        ["41","Unable to adjust xenon light volume..","無法調整氙氣燈亮度","燈泡劣化或細胞槽髒污","點擊 [Clear] 清除錯誤訊息,執行自動清洗","氙氣燈老化或細胞槽髒污","更換氙氣燈、重置相機與燈管設定"],
+        ["42","Blank measurement of the flow cell has a problem..","流式細胞槽空白量測異常","視野中偵測到粒子","執行自動清洗與導流(Priming)","視野中偵測到粒子或細胞槽髒污","清潔細胞槽、執行硬體調校"],
+        ["44","Focus adjustment has failed..","焦距調整失敗","粒子數不符標準","確認校正液效期,重對焦","校正粒子偵測數不符標準","檢查校正液、執行自動對焦調整"],
+        ["45","Unable to calibrate particle concentration..","無法校正粒子濃度","調整係數超出規定","確認校正液效期,重對焦","調整係數超出規定範圍","硬體測試與更換零件"],
+        ["46","Insufficient sample volume.","檢體量不足","檢體液位低於 40mm","確保檢體量充足","液位感應器未觸發 (Seq 118 設定值)","調整液面偵測頻率"],
+        ["47","Couldn't read barcode ID..","無法讀取條碼 ID","標籤位置不對或模糊","重新張貼正確標籤並重試","條碼單元在進架時無回應","硬體測試、更換條碼掃描零件"],
+        ["48","Sampler measurement lever port feed error.","進樣器量測桿港口進架錯誤","運輸機械障礙","排除障礙,確認檢體管未突出","進架操作時旋轉偵測失敗","測試調整進樣機械結構、更換零件"],
+        ["51","STAT port is not at aspiration position..","STAT 槽未處於吸取位置","STAT 槽位移或感應器錯誤","將 STAT 槽歸位後重試"," STAT 槽位移或感應器 (Port set sensor) 錯誤","調整位置感應器、執行硬體測試"],
+        ["52","Loading side of sampler is full of racks..","進樣器裝載端架子已滿","裝載超過 5 個架子","移除已完成檢體架,點擊 [Clear] 清除錯誤訊息","進樣器前後架子感應器皆處於 ON 狀態","檢查架子感應器、更換零件"],
+        ["53","Unexpected communication has been detected between the main unit and the computer.","偵測到非預期的通訊","儀器發送未預期指令","點擊 [Clear] 清除錯誤訊息,若重複請重啟","分析儀發送應用程式未預期命令或版本不符","重啟電腦與主機"],
+        ["54","Register new sheath solution.","需註冊新鞘液","使用次數超過註冊額度","更換鞘液瓶並掃描新條碼","剩餘量 (Remaining) 低於設定閾值","執行 ReagentCode 重設"],
+        ["55","No response from the host computer..","Host 電腦無回應","網路斷開或 Host 應用異常","檢查網路線連線與 Host 狀態","網路斷開或 Host 端通訊超時","檢查 Host 應用程式與通訊線路"],
+        ["56","Communication with the host computer has failed..","與 Host 電腦通訊失敗","網路斷開或 Host 應用異常","檢查網路連線並點擊 [Clear] 清除錯誤訊息","Retry 次數達上限或通訊規格不符","檢查 Host 設定與通訊線路"],
+        ["57","TCP/IP connection with the host computer is disconnected..","與 Host 之 TCP/IP 斷開","網路線拔除或 Host 程式關閉","檢查連接並點擊 [Clear] 清除錯誤訊息","KeepAlive 信斷超過 10 秒","檢查 Host 設定與網路連線"],
+        ["58","Communication with CHM analyzer has failed..","與 CHM 分析儀通訊失敗","連接線拔除或設定錯誤","檢查通訊線連接","串列通訊超時或 ACK 接收失敗","檢查設定與連接線"],
+        ["59","The front cover is open..","前蓋已開啟","偵測到前蓋未關","關閉前蓋,點擊 [Clear] 清除錯誤訊息","偵測到前蓋感應器斷開","檢查前蓋感應器磁簧開關"],
+        ["60","Power voltage drop was detected..","偵測到電源電壓下降","電壓不穩 ","檢查電源線與插座接線"," 電源系統電壓下降","檢查電源供應器與內部電路"],
+        ["61","The xenon lamp is due for replacement..","氙氣燈需更換","計數已達上限","報修並由工程師更換","總量測計數超過規定值","執行氙氣燈更換與亮度調整"],
+        ["62","The seal for the sheath pump is due for replacement..","鞘液幫浦密封圈需更換","屆滿年限或次數","報修並由工程師更換","幫浦密封圈使用次數或年限屆滿","更換鞘液幫浦密封圈 (Cap seal)"],
+        ["63","The seal for the sample pump is due for replacement..","檢體幫浦密封圈需更換","屆滿年限或次數","報修並由工程師更換","幫浦密封圈使用次數或年限屆滿","更換檢體幫浦密封圈 (Cap seal)"],
+        ["64","The sample filter is due for cleaning/replacement..","檢體過濾器需清潔/更換","屆滿年限或次數","更換檢體過濾器","過濾器使用次數超過上限","執行檢體過濾器更換程序"],
+        ["65","The QC (L-J) result is abnormal..","品管 (L-J) 結果異常","測量結果超出預期範圍","確認品管液效期,重對焦量測","結果超出 2SD/3SD 預期變異範圍","檢查感應器與硬體調校"],
+        ["66","The control measurement results are out of standard range..","品管結果超出標準範圍","粒子數量不在預期內","確認品管液效期,重對焦量測","粒子數量完全不在預期值區間內","檢查流量路徑與硬體調校"],
+        ["67","Over xx days have passed since the last control measurement..","超過天數未執行品管","超過規定的量測間隔","執行品管量測","設定的品管量測間隔已過","檢查系統時間與 QC 設定"],
+        ["68","Control solution expired..","品管液已過期","品管液已逾效期","更換新效期品管液","註冊的品管液批號過期","協助客戶註冊新批號"],
+        ["69","Calibrator expired; focus adjustment results compromised..","校正液過期 (對焦)","校正液已逾效期","重新執行校正","對焦用校正液批號已過期","檢查校正液註冊資訊"],
+        ["70","Calibrator expired; calibration results compromised..","校正液過期 (校正)","校正液已逾效期","重新執行校正","濃度校正用校正液批號過期","檢查校正液註冊資訊"],
+        ["71","Sheath solution expired; results compromised..","鞘液已過期","使用已過期鞘液","更換效期內鞘液瓶","產生結果時鞘液已逾效期","檢查鞘液註冊資料"],
+        ["72","Over 24 hours have passed since the power-on..","開機超過 24 小時","持續運作時間過長","Shutdown 後重新啟動","持續運作計時超過 24 小時","檢查感應器、重啟主機"],
+        ["73","Over xxx hours have passed since the last periodic washing..","錯過週期清洗","超過排定清洗時間","儀器將自動執行週期清洗","超過排定之週期清洗時間","檢查週期清洗排程"],
+        ["74","HDD has run out of disk space..","硬碟空間不足","可用空間低於 10%","備份並刪除舊資料","可用硬碟空間低於 10%","執行資料備份與磁碟清理"],
+        ["76","Problems were detected while analyzing images..","影像分析偵測到問題","影像處理或 GPU 錯誤","重測檢體,GPU 錯誤需重啟","AUTION ENGINE 算法或 GPU 異常","檢查 GPU 驅動與 Engine Log"],
+        ["77","Sampling trouble.","採樣故障","連續 5 個檢體量不足","確認影像後執行品管量測","連續 5 檢體 No Sample ,系統懷疑是硬體故障","檢查抽樣量吸取高度與液位感應"],
+        ["78","Sample flow trouble.","檢體流路故障","連續 5 個檢體顆粒極少","執行品管量測確認系統","連續 5 檢體粒子極少,系統懷疑是硬體或管路異常","檢查細胞槽流速、清流量感應器"],
+        ["79","Mismatch of serial No. in the sediment unit data.","序號資料不符","電腦與主機序號不一","關機確認主機序號","電腦序號資料與主機記憶板不符","更換記憶板或手動匹配序號"],
+        ["80","The flow volume at the sample filter is abnormal..","檢體過濾器流量異常","偵測到流速不穩定或有氣泡","執行導流(Priming)與清洗","檢體過濾器或抽樣量堵塞","清潔/更換過濾器、清理噴嘴"],
+        ["81","Unable to register the STAT parameters..","無法註冊 STAT 參數","儀器非待機狀態即預約","待機且就緒後再設定","系統非就緒狀態 (LED 燈號不符)","無 (排除操作流程問題)"]
     ];
 
-    // 初始化渲染
-    function init() {
-        renderCards(errorData);
-        
-        document.getElementById('searchInput').addEventListener('input', filterData);
-        document.getElementById('categoryFilter').addEventListener('change', filterData);
+    const smDataOriginal = {
+        "1": { id: "1", scenario: "While accessing the Database", name: "An error occurred while accessing the Database.", msg: "A problem occurred in the application.", instr: "Close the application and restart the PC.=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "GUI", timing: "While accessing the Database", cause: "Return value from the module", add: "N/A", other: "N/A", clear: "Close the application. Restart Windows and the application.", after: "Close the application.Restart Windows and the application.", checkpoints: "Reinstalling the GUI, checking PC hardware, etc." },
+        "2": { id: "2", scenario: "After turning the PC on", name: "An error occurred during initialization of the main unit communication module.", msg: "A problem occurred in the application.", instr: "Close the application and restart the PC.=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "GUI", timing: "During initiation of the GUI", cause: "Return value from the module Error values are returned after instantiation of class, or module initialization.", add: "N/A", other: "N/A", clear: "Close the application. Restart Windows and the application.", after: "Close the application.Restart Windows and the application.", checkpoints: "Reinstalling the GUI, checking PC hardware, etc." },
+        "3": { id: "3", scenario: "After turning the PC on", name: "An error occurred during initialization of the host communication module.", msg: "A problem occurred in the application.", instr: "Close the application and restart the PC.=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "GUI", timing: "During initiation of the GUI", cause: "Return value from the module Error values are returned after instantiation of class, or module initialization.", add: "N/A", other: "N/A", clear: "Close the application. Restart Windows and the application.", after: "Close the application.Restart Windows and the application.", checkpoints: "Reinstalling the GUI, checking PC hardware, etc." },
+        "5": { id: "5", scenario: "After turning the PC on", name: "An error occurred during initialization of the camera control module.", msg: "A problem occurred in the application.", instr: "Close the application and restart the PC.=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "GUI", timing: "During initiation of the GUI", cause: "Return value from the module Error values are returned after instantiation of class, or module initialization.The camera is not communicated with at this point.(or, it cannot.)", add: "N/A", other: "N/A", clear: "Close the application. Restart Windows and the application.", after: "Close the application.Restart Windows and the application.", checkpoints: "Reinstalling the GUI, checking PC hardware, etc." },
+        "6": { id: "6", scenario: "After turning the main instrument on", name: "The memory board is not correctly set.", msg: "No memory board was found on the control board in the instrument.", instr: "Restart the instrument.=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "Main unit", timing: "After turning the instrument ON and the GUI in the boot program is connected with in TCP/IP.", cause: "The memory board detection sensor detects no memory board set.", add: "N/A", other: "N/A", clear: "Restart the instrument.", after: "Restart the instrument", checkpoints: "Checking memory boards" },
+        "7": { id: "7", scenario: "After turning the main instrument on", name: "Backup RAM battery error", msg: "Low battery power was detected for the memory where the operation count is recorded in the instrument.", instr: "Click the <clear> button to clear the error.", detected: "Main unit", timing: "After the main program starts the initialization process.", cause: "Battery inspection codes are not recorded in RAM.The main analyzer was turned off without performing the shutdown operation by the application.", add: "N/A", other: "N/A", clear: "None.", after: "None.", checkpoints: "Checking memory boards Checking batteries" },
+        "8": { id: "8", scenario: "After turning the main instrument on", name: "Backup RAM data error", msg: "A problem was detected in the data memory where the operation count is recorded in the instrument.", instr: "Click the <clear> button to clear the error.", detected: "Main unit", timing: "After the main program starts the initialization process.", cause: "Checksum error of operation counters.", add: "Data type", other: "COUNT_DATA:Counter data FLAG_DATA:Flag data TIME_DATA:Operation time measurement data REAGENT_DATA:Remaining sheath solution data MEASNO_DATA:Measurement number data", clear: "None.", after: "None.", checkpoints: "Checking memory boards Checking batteries" },
+        "9": { id: "9", scenario: "After turning the main instrument on", name: "An error occurred in the main unit. The main unit was reset.", msg: "A error occurred with the software. The main unit was reset.", instr: "Click [clear] and wait until the PC is on standby.=> Check the error number in the <error list screen> and report to service engineers.", detected: "Main unit", timing: "After the main program starts the initialization process.", cause: "-  The backup RAM has a record that indicates one of the below occurred:Software reset due to T999 (Runaway)Hardware reset due to power supply voltage decrease to 3.3 VSoftware reset due to watchdog timerSoftware reset due to TCP/IP connection disconnected", add: "N/A", other: "In the case of a freeze caused by an internal communication error, the \"cause of occurrence\", \"internal communication at the time of occurrence (history data)\" are recorded in the file log as additional data for the service.", clear: "None.", after: "None.", checkpoints: "Collect the log." },
+        "10": { id: "10", scenario: "Always monitored.", name: "TCP/IP connection with the main unit was lost.", msg: "a)  The LAN cable connecting the instrument and the PC is unplugged.The main unit could have been turned off without being shut down properly.", instr: "a)  Check that the LAN cable is connected.=> Click [Clear] and the error will be cleared.click [Clear] and the error will be cleared.", detected: "GUI", timing: "Always", cause: "Socket Error Communication error", add: "N/A", other: "N/A", clear: "Check the LAN connection.", after: "Check the LAN connection.Restart both the computer and the main unit.", checkpoints: "Check LAN connection.Restart both the computer and the main unit." },
+        "11": { id: "11", scenario: "After turning the main instrument on", name: "The power was turned off during the last measurement.", msg: "The sampler measurement could have been halfway and unfinished.", instr: "Click the <clear> button to clear the error.=> Turn ON the main instrument, and wait until it is at standby.=> Check sample measurement states in <Measurement result screen>.", detected: "Main unit", timing: "After the main program starts the initialization process.", cause: "The RAM has a flag indicating power down.", add: "N/A", other: "N/A", clear: "Check which sample the last measurement result is for.", after: "Check which sample the last measurement result is for.", checkpoints: "Checking memory boards Checking batteries" },
+        "12": { id: "12", scenario: "After turning the main instrument on", name: "Instrument serial No. was not found.", msg: "The PC connected cannot recognize the serial No. of the main instrument.", instr: "Close the application and restart the PC.=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "Main unit", timing: "After the main program starts the initialization process.", cause: "The serial No. data cannot be obtained from the memory board (F- ROM) in the instrument.Reading error, writing error, deleting error.", add: "/Code 1: Cause of the errorCode 2: -Code 3: -", other: "Code 1:[1]: Reading: the power turned OFF while writing last time.[2]: Reading: No INDEX information[3]: Reading: Checksum error[4]: Writing: Failed[5-9]: The initialization writing failed.", clear: "None.", after: "None.", checkpoints: "Check serial number, recovery,Check the data of the records, and if necessary restore the setting values in the backup data." },
+        "14": { id: "14", scenario: "While a driving unit is operating.", name: "Nozzle U/D drive unit", msg: "A problem was found in the sampling nozzle operation. The extruded sample container may have collided with the sampling nozzle during sample aspiration.", instr: "Click the <clear> button to clear the error.=> Check that there are no obstacles in the direction the sampling nozzle is moving.=> Check that the sample container is properly set inside the sample rack and not sticking out.=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "Main unit", timing: "When the nozzle returns to its home position When the nozzle moves downwards.", cause: "Error in the home position PI, or encoder positionPI light shielding state HI 1 PI opening state Lo 0", add: "Information on the sample to be aspirated (measurement No., barcode ID, rack No., test tube position No., rack ID)Code 1: Cause of the errorCode 2: Sequence table No.Code 3: -", other: "Code 1:: Initial point PI not detected: PI_LO not detected at a stop point: PI_HI not detected at a stop point: N/A: Encoder synchronism loss detected (too long at the same encode position while operating)Code 2:[0-255] refer to8.1.4 Sequence table No.", clear: "Open the front cover and check that there is no obstruction inside the instrument.", after: "None.", checkpoints: "Hardware testing, adjusting, part changing, driver PCB changing, etc." },
+        "15": { id: "15", scenario: "While a driving unit is operating.", name: "Nozzle F/B driving error", msg: "A problem was found in the sampling nozzle operation.", instr: "Click the <clear> button to clear the error.=> Check that there are no obstacles in the direction the sampling nozzle is moving.=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "Main unit", timing: "When the nozzle returns to its initial point. When the nozzle goes through moving operations.", cause: "Error in the home position PI, or encoder positionPI light shielding state HI 1 PI opening state Lo 0", add: "Information on the sample to be aspirated (measurement No., barcode ID, rack No., test tube position No., rack ID)Code 1: Cause of the errorCode 2: Sequence table No.Code 3: -", other: "Code 1:: Initial point PI undetected: PI_LO undetected at a stop point: PI_HI undetected at a stop point: Encoder position error at a stop point (washing bath, rack, STAT position)Encoder unsynchronized detection (too long at the same encoding position while operating)Code 2:[0-255] refer to8.1.4 Sequence table No.", clear: "Open the front cover and check that there is no obstruction inside the instrument.", after: "None.", checkpoints: "Hardware testing, adjustment, parts replacement, driver board replacement, etc. Adjust the nozzle front-back drive encoder." },
+        "16": { id: "16", scenario: "While a driving unit is operating.", name: "Sheath solution sending pump operation error", msg: "A problem was found in the operation of the sheath pump.", instr: "Click the <clear> button to clear the error.=> The sheath solution sending pump checks that there are no obstacles in the direction the pump is moving.=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "Main unit", timing: "When the nozzle is at the initial position.", cause: "Initial point PI statePI light shielding state HI 1 PI opening state LO 0", add: "Information on the sample to be aspirated (measurement No., barcode ID, rack No., test tube position No., rack ID)Code 1: Cause of the errorCode 2: Sequence table No.Code 3: -", other: "Code 1:: Initial point PI undetected: PI_LO undetected at a stop position: PI_HI undetected at a stop positionCode 2:[0-255] refer to8.1.4 Sequence table No.", clear: "None.", after: "None.", checkpoints: "Hardware testing, adjusting, part changing, driver PCB changing, etc." },
+        "17": { id: "17", scenario: "While a driving unit is operating.", name: "Fluid pump drive error", msg: "A problem was found in the operation of the sample pump.", instr: "Click the <clear> button to clear the error.=> Check that there are no obstacles in the direction the sample sending pump is moving.=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "Main unit", timing: "When the nozzle is at the initial position.", cause: "Initial point PI statePI light shielding state HI 1 PI opening state LO 0", add: "Information on the sample to be aspirated (measurement No., barcode ID, rack No., test tube position No., rack ID)Code 1: Cause of the errorCode 2: Sequence table No.Code 3: -", other: "Code 1:: Initial point PI undetected: PI_LO undetected at a stop position: PI_HI undetected at a stop positionCode 2:[0-255] refer to8.1.4 Sequence table No.", clear: "None.", after: "None.", checkpoints: "Hardware testing, adjusting, part replacement, etc." },
+        "18": { id: "18", scenario: "While a driving unit is operating.", name: "Washing bath overflow", msg: "An overflow (leakage) was detected in the washing bath area.", instr: "Turn the instrument OFF immediately and check that there is no leakage.(This error cannot be cleared by clicking [Clear].)=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "Main unit", timing: "When the pump is operating (sheath solution sending, sample sending, sheath solution filling tube pump, drain tube pump, drain air pump)", cause: "The voltage of the short-circuited electrodes for overflow detection (A/D count) is checked.The A/D count is monitored once every 2 seconds.The average distance of 3 movements. When they are over threshold, it is considered an overflow state.The current overflow state is checked after a pump operation, after which an error may occur.", add: "Information on the sample to be aspirated (measurement No., barcode ID, rack No., test tube position No., rack ID)Code 1: -Code 2: Sequence table No.Code 3: -", other: "Code 2:[0-255] refer to8.1.4 Sequence table No.", clear: "The instrument is turned off.Open the front cover and check inside. Clean the areas suffering from leakage.", after: "The instrument is turned off. Open the front cover and check inside. Clean the areas suffering from leakage.", checkpoints: "Hardware testing, adjusting, part replacement, etc." },
+        "19": { id: "19", scenario: "While a driving unit is operating.", name: "Flow cell overflow", msg: "Overflow (leakage) was detected in the flow cell.", instr: "Turn the instrument OFF immediately and check that there is no leakage.(This error cannot be cleared by clicking [Clear].)=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "Main unit", timing: "When the pump is operating (sheath solution sending, sample sending, sheath solution filling tube pump, drain tube pump, drain air pump)", cause: "The voltage of the short-circuited electrodes for overflow detection (A/D count) is checked.The A/D count is monitored once every 2 seconds.The average distance of 3 movements. When they are over threshold, it is considered an overflow state.The current overflow state is checked after a pump operation, after which an error may occur.", add: "Information on the sample to be aspirated (measurement No., barcode ID, rack No., test tube position No., rack ID)Code 1: -Code 2: Sequence table No.Code 3: -", other: "Code 2:[0-255] refer to8.1.4 Sequence table No.", clear: "The instrument is turned off.Open the front cover and check inside. Clean the areas suffering from leakage.", after: "The instrument is turned off. Open the front cover and check inside. Clean the areas suffering from leakage.", checkpoints: "Hardware testing, adjusting, part replacement, etc." },
+        "20": { id: "20", scenario: "While a driving unit is operating.", name: "Sample filter overflow", msg: "An overflow (leakage) was detected in the area shown in the Sample filter overflow tray.", instr: "Turn the instrument OFF immediately and check that there is no leakage.(This error cannot be cleared by clicking [Clear].)=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "Main unit", timing: "When the pump is operating (sheath solution sending, sample sending, sheath solution filling tube pump, drain tube pump, drain air pump)", cause: "The voltage of the short-circuited electrodes for overflow detection (A/D count) is checked.The A/D count is monitored once every 2 seconds.The average distance of 3 movements. When they are over threshold, it is considered an overflow state.The current overflow state is checked after a pump operation, after which an error may occur.", add: "Information on the sample to be aspirated (measurement No., barcode ID, rack No., test tube position No., rack ID)Code 1: -Code 2: Sequence table No.Code 3: -", other: "Code 2:[0-255] refer to8.1.4 Sequence table No.", clear: "The instrument is turned off.Open the front cover and check inside. Clean the areas suffering from leakage.", after: "The instrument is turned off. Open the front cover and check inside. Clean the areas suffering from leakage.", checkpoints: "Hardware testing, adjusting, part replacement, etc." },
+        "21": { id: "21", scenario: "While a driving unit is operating.", name: "Plunger pump unit overflow", msg: "Overflow (leakage) was detected at the plunger pump.", instr: "Turn the instrument OFF immediately and check that there is no leakage.(This error cannot be cleared by clicking [Clear].)=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "Main unit", timing: "When the pump is operating (sheath solution sending, sample sending, sheath solution filling tube pump, drain tube pump, drain air pump)", cause: "The voltage of the short-circuited electrodes for overflow detection (A/D count) is checked.The A/D count is monitored once every 2 seconds.The average distance of 3 movements. When they are over threshold, it is considered an overflow state.The current overflow state is checked after a pump operation, after which an error may occur.", add: "Information on the sample to be aspirated (measurement No., barcode ID, rack No., test tube position No., rack ID)Code 1: -Code 2: Sequence table No.Code 3: -", other: "Code 2:[0-255] refer to8.1.4 Sequence table No.", clear: "The instrument is turned off.Open the front cover and check inside. Clean the areas suffering from leakage.", after: "The instrument is turned off. Open the front cover and check inside. Clean the areas suffering from leakage.", checkpoints: "Hardware testing, adjusting, part replacement, etc." },
+        "22": { id: "22", scenario: "While a driving unit is operating.", name: "Drain bottle overflow 1", msg: "An overflow (leakage) was detected in the area Trap bottle S", instr: "Turn the instrument OFF immediately(This error cannot be cleared by clicking [Clear].)=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "Main unit", timing: "When the pump is operating (sheath solution sending, sample sending, sheath solution filling tube pump, drain tube pump, drain air pump)", cause: "The voltage of the short-circuited electrodes for overflow detection (A/D count) is checked.The A/D count is monitored once every 2 seconds.The average distance of 3 movements. When they are over threshold, it is considered an overflow state.The current overflow state is checked after a pump operation, after which an error may occur.", add: "Information on the sample to be aspirated (measurement No., barcode ID, rack No., test tube position No., rack ID)Code 1: -Code 2: Sequence table No.Code 3: -", other: "Code 2:[0-255] refer to8.1.4 Sequence table No.", clear: "The instrument is turned off.Open the front cover and check inside. Clean the areas suffering from leakage.", after: "The instrument is turned off. Open the side cover and check inside. Clean the areas suffering from leakage.", checkpoints: "Hardware testing, adjusting, part replacement, etc." },
+        "23": { id: "23", scenario: "While a driving unit is operating.", name: "Drain bottle overflow 2", msg: "An overflow (leakage) was detected in the area shown in Drain bottle overflow tray.", instr: "Turn the instrument OFF immediately and check that there is no leakage.(This error cannot be cleared by clicking [Clear].)=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "Main unit", timing: "When the pump is operating (sheath solution sending, sample sending, sheath solution filling tube pump, drain tube pump, drain air pump)", cause: "The voltage of the short-circuited electrodes for overflow detection (A/D count) is checked.The A/D count is monitored once every 2 seconds.The average distance of 3 movements. When they are over threshold, it is considered an overflow state.The current overflow state is checked after a pump operation, after which an error may occur.", add: "Information on the sample to be aspirated (measurement No., barcode ID, rack No., test tube position No., rack ID)Code 1: -Code 2: Sequence table No.Code 3: -", other: "Code 2:[0-255] refer to8.1.4 Sequence table No.", clear: "The instrument is turned off.Open the front cover and check inside. Clean the areas suffering from leakage.", after: "The instrument is turned off. Open the side cover and check inside. Clean the areas suffering from leakage.", checkpoints: "Hardware testing, adjusting, part replacement, etc." },
+        "24": { id: "24", scenario: "While a driving unit is operating.", name: "Drain bottle full", msg: "The drain bottle is full.", instr: "Empty the drain bottle=> Click [Clear] and the error will be cleared.=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "Main unit", timing: "When the pump is operating (drain tube pump, drain air pump).", cause: "Drain bottle float sensorThe current sensor state is checked after a pump operation, and an error might occur.A drain bottle float sensor is an optional product. It is not used in default.", add: "N/A", other: "N/A", clear: "None.", after: "Empty the tank.", checkpoints: "Check the sensor." },
+        "25": { id: "25", scenario: "While the flow meter is communicating.", name: "Flow meter communication error", msg: "Data communication with the flow meter failed.", instr: "Click the <clear> button to clear the error.=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "Main unit", timing: "When 12 C communicating", cause: "One of the errors concerning either hold master time timeout, start stop bit, ACK/NAK bit, or bus right obtaining.", add: "/Code 1: I2C communication error countCode 2: -Code 3: -", other: "Code 1:[1-255] I2C communication error number", clear: "None.", after: "None.", checkpoints: "Check the sensor. Hardware test" },
+        "26": { id: "26", scenario: "While the flow meter is communicating.", name: "Flow meter status error", msg: "A status indicating a problem was found in the data received from the flow meter.", instr: "Click the <clear> button to clear the error.=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "Main unit", timing: "The values of the register (Read- Only Register 1) is incorrect.", cause: "Sensor detection failure(Abnormality in the sensor of the flowmeter)Power voltage loweredEEPROM initialization failure", add: "/Code 1: Flow meter statusCode 2: -Code 3: -", other: "[1]    Code 1:: Read timing mistaken: N/A: I2C_FLAG_BUSY is set. The communication with the flow meter is erroneous.", clear: "None.", after: "None.", checkpoints: "Check the sensor. Hardware test" },
+        "27": { id: "27", scenario: "While a driving unit is operating.", name: "Sheath solution flow volume in the flow cell is abnormal.", msg: "Unstable flow volume or bubbles were detected.", instr: "Click the <clear> button to clear the error.=> Perform priming=> The instrument will automatically perform a periodic washing.", detected: "Main unit", timing: "Detection scene StartupOther adjustment operation", cause: "Unstable flow rate Abnormal flow velocity Bubble detectionFlow path clogging detectionSheath liquid tube pump flow rate was adjusted from 2500 to 12500(retried 6 times).Sheath plunger pump flow rate adjusted to 20000 - 21000 (retried6 times)", add: "/Code 1: Occasion the error occurredCode 2: Adjustment valuesCode 3: -", other: "Code 1:[1]: Tube pump flow volumeCode 2:[40-100] DC motor rotation DUTY ratio[%], the standard being 70%.*******Code 1:[2]: Sheath plunger pump flow volumeCode 2: [200-300] Pump speed [pps], the standard being 240 pps.", clear: "None.", after: "Perform priming.If that does not solve the problem, perform an automatic washing.If this error is cleared and the flow rate adjustment is continued, the last adjustment value of the previous flow rate will be inherited and the adjustment will start.", checkpoints: "Automatic washing" },
+        "28": { id: "28", scenario: "While a driving unit is operating.", name: "Sample flow volume in the flow cell is abnormal.", msg: "Unstable flow volume or bubbles were detected.", instr: "Click the <clear> button to clear the error.=> Perform priming=> The instrument will automatically perform a periodic washing.", detected: "Main unit", timing: "Sampler measurementSTAT measurement Control measurement Focus adjustment Calibration WashingOther adjusting operations", cause: "Unstable flow rate Abnormal flow velocity Bubble detectionFlow path clogging detectionSample flow rate is not within the range of 10000 to 15000.The absolute value of ⊿(t) - (t-1) of the sample flow rate cannot be recorded within 1000 (can be changed) twice in a row (t: every 0.24 seconds).", add: "Information on the sample to be aspirated (measurement No., barcode ID, rack No., test tube position No., rack ID)Code 1: Occasion the error occurredCode 2: Adjustment valuesCode 3: -", other: "Code 1:: Initiation, error recovery: Normal measurement: Dilution measurement: Blank measurement: Hardware testCode 2: [50-200] Pump speed [pps], the standard being96 pps.", clear: "None.", after: "Perform priming.If that does not solve the problem, perform an automatic washing.If this error is cleared and the flow rate adjustment is continued, the last adjustment value of the previous flow rate will be inherited and the adjustment will start.", checkpoints: "Automatic flushing. Automatic adjustment of flow rate. Cleaning the inside of the sheath flow sensor." },
+        "29": { id: "29", scenario: "Always monitored.", name: "Environment temperature error", msg: "The measurement environment conditions are not met.", instr: "Click the <clear> button to clear the error.=> Check that the temperature of the instrument satisfies the measurement environment conditions in the<sensor check screen>.", detected: "Main unit", timing: "-  When the state of the instrument changesInitiation => standbyStandby => sampler measurement(includ ing automatic focus adjustment)Sampler measurement => standby", cause: "The environment temperature is constantly out of the range from 12˚C at lowest and to 33˚C at highest.", add: "Information on the sample to be aspirated (measurement No., barcode ID, rack No., test tube position No., rack ID)Code 1: -Code 2: Temperature valueCode 3: -", other: "Code 2: An integral value [˚C] that represents the temperature measured to the first decimal point and then multiplied by 10.", clear: "None.", after: "Check air conditioning.", checkpoints: "Automatic flushing. Automatic adjustment of flow rate. Cleaning the inside of the sheath flow sensor." },
+        "30": { id: "30", scenario: "Always monitored.", name: "Sheath solution temperature error", msg: "The temperature of the sheath solution inside the instrument is not appropriate.", instr: "Click the <clear> button to clear the error.=> Check the temperature of the sheath solution in the<sensor check screen>.Check that the environment temperature satisfies the measurement environment conditions.", detected: "Main unit", timing: "-  When the state of the instrument changesInitiation => standbyStandby => sampler measurementSampler measurement (including automatic focus adjustment)=> standbyDuring sample measurement (between samples)", cause: "The temperature of the sheath solution is repeatedly going outside the range between 14˚C at lowest and 36˚C at highest.", add: "Information on the sample to be aspirated (measurement No., barcode ID, rack No., test tube position No., rack ID)Code 1: -Code 2: Temperature valueCode 3: -", other: "Code 2: An integral value [˚C] that represents the temperature measured to the first decimal point and then multiplied by 10.", clear: "None.", after: "None.", checkpoints: "Check the sensor." },
+        "31": { id: "31", scenario: "Always monitored.", name: "Optical unit temperature error", msg: "Sheath solution temperature was not properly maintained in the instrument.", instr: "Click the <clear> button to clear the error.=> Check that the vent that can be seen outside the instrument is not blocked.=> Check the temperature of the optical unit in the<sensor check screen>.Check that the environment temperature satisfies the measurement environment conditions.", detected: "Main unit", timing: "-  When the state of the instrument changesInitiation => standbyStandby => sampler measurement(includ ing automatic focus adjustment)Sampler measurement => standby", cause: "The temperature of the optical unit is repeatedly going outside the range between 1˚C at lowest and 85˚ C at highest.", add: "Information on the sample to be aspirated (measurement No., barcode ID, rack No., test tube position No., rack ID)Code 1: -Code 2: Temperature valueCode 3: -", other: "Code 2: An integral value [˚C] that represents the temperature measured to the first decimal point and then multiplied by 10.", clear: "None.", after: "None.", checkpoints: "Check the sensor." },
+        "32": { id: "32", scenario: "While a driving unit is operating.", name: "Unable to fill the internal tank with the sheath solution.", msg: "a)  There is no sheath solution in the sheath solution bottle.The tube that connects that sheath solution bottle and the sheath solution tank is bending.The tube pump for sheath solution aspiration encountered a problem.", instr: "Change to a new sheath solution bottle.Check the tube that is connecting the sheath solution bottle and the sheath solution tank.=> Click [Clear] and the error will be cleared.3) => Click [Clear] and the error will be cleared.=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "Main unit", timing: "Initiation Sampler measurement Error recovery Other adjusting operations", cause: "The sheath solution bottle inside the instrument is empty of the solution just after the pump sent sheath solution, according to the liquid detection sensor.", add: "N/A", other: "N/A", clear: "None.", after: "If it is not empty the tube pump or tube itself might be clogged.", checkpoints: "If it is not empty the tube pump or tube itself might be clogged." },
+        "33": { id: "33", scenario: "While a driving unit is operating.", name: "Focus adjustment stage drive trouble", msg: "Optical unit temperature was not properly maintained in the instrument.", instr: "Click the <clear> button to clear the error.=> Check that there are no obstacles in the direction the focus adjusting stage is moving.", detected: "Main unit", timing: "When the nozzle is at the initial position.", cause: "Initial position PI, going and returning pulse check", add: "/Code 1: Cause of the errorCode 2: Sequence table No.Code 3: -", other: "Code 1:: Initial point PI undetected: PI_H_ undetected: PI_L_ undetected Code 2:[0-255] refer to8.1.4 Sequence table No.", clear: "None.", after: "None.", checkpoints: "Hardware testing, adjusting, part replacement, etc." },
+        "34": { id: "34", scenario: "While a driving unit is operating.", name: "The unloading side of the sampler is full with racks.", msg: "a )The unloading side of the sampler is full with racks.b) The rack unloading error had an error.", instr: "Remove the rack from the unloading side of the sampler unit.=> Click [Clear] and the error will be cleared.click [Clear] and the error will be cleared.=> Clean the sampler unit.=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "Main unit", timing: "Initiation Sampler measurement Other adjustment", cause: "Rack full sensor check", add: "N/A", other: "N/A", clear: "Remove the rack.", after: "Clean the sampler.", checkpoints: "Hardware testing, adjusting, part replacement, etc." },
+        "35": { id: "35", scenario: "While a driving unit is operating.", name: "Sampler return lever drive trouble", msg: "The extruded sample container may have collided during movement of the racks.", instr: "Click the <clear> button to clear the error.=> Check that there are no obstacles in the direction the sampler unloading lever is moving.=> Check that the sample container is set within the sample rack and not sticking out.=> Clean the sampler unit.=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "Main unit", timing: "When the nozzle is at the initial position.", cause: "Initial position PI, going and returning pulse check", add: "N/A", other: "N/A", clear: "Check that the rack is not stuck.", after: "Clean the sampler.", checkpoints: "Hardware testing, adjusting, part replacement, etc." },
+        "36": { id: "36", scenario: "While a driving unit is operating.", name: "Sampler measurement lever drive trouble", msg: "The extruded sample container may have collided during movement of the racks.", instr: "Click the <clear> button to clear the error.=> Check that there are no obstacles in the direction the sampler measurement lever is moving.=> Check that the sample container is set within the sample rack and not sticking out.=> Clean the sampler unit.=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "Main unit", timing: "When the nozzle is at the initial position.", cause: "Initial position PI, going and returning pulse check", add: "N/A", other: "N/A", clear: "Check that the rack is not stuck.", after: "Clean the sampler.", checkpoints: "Hardware testing, adjusting, part replacement, etc." },
+        "37": { id: "37", scenario: "At initiation", name: "The instrument cannot recognize the digital camera.", msg: "a)  The USB cable that connects the PC and the camera is unplugged.The USB cable is not plugged in correctly.A problem occurred in the application.", instr: "Check whether the USB cable is connected correctly.=> Click [Clear] and the error will be cleared.=> Restart the PCCheck if the connecting port is the type used by the USB cable (3.0/2.0).=> Click [Clear] and the error will be cleared.=> Restart the PCClick [Clear] and the error is cleared.=> Check the error number in the <error list screen> and report to service engineers.", detected: "GUI", timing: "At initiation Other adjusting operations", cause: "Three digital cameras with registered serial numbers cannot be recognized.Camera cable is connected to USB2.0 port.", add: "N/A", other: "N/A", clear: "Check the USB connection of the camera. Unplug and re-plug the USB cable.", after: "Check the USB connection of the camera. Unplug and re-plug the USB cable.Restart Windows.", checkpoints: "Check the serial Nos. of every camera and set them in the serial No. input screen in Service mode." },
+        "38": { id: "38", scenario: "When the camera starts connecting.", name: "Digital camera communication error", msg: "a)  The USB cable that connects the PC and the camera is unplugged.The USB cable is not plugged in correctly.A problem occurred in the application.", instr: "Check whether the USB cable is connected correctly.=> Click [Clear] and the error will be cleared.=> Restart the PCCheck if the connecting port is the type used by the USB cable (3.0/2.0).=> Click [Clear] and the error will be cleared.=> Restart the PCClick [Clear] and the error is cleared.=> Check the error number in the <error list screen> and report to service engineers.", detected: "GUI", timing: "At initiation Other adjusting operations", cause: "Unable to communicate with digital camera.Disconnection of USB cable Timeout", add: "N/A", other: "N/A", clear: "Check the USB connection of the camera. Unplug and re-plug the USB cable.", after: "Check the USB connection of the camera. Unplug and re-plug the USB cable.Restart Windows.", checkpoints: "Hardware testing, adjusting, part replacement, etc." },
+        "39": { id: "39", scenario: "When the camera starts connecting.", name: "Digital camera status error", msg: "a)  The USB cable that connects the PC and the camera is unplugged.A problem occurred in the application.", instr: "Check the connection of the USB cable.=> Click [Clear] and the error will be cleared.=> Restart the PCClick [Clear] and the error will be cleared.=> Check the error number in the <error list screen> and report to service engineers.", detected: "GUI", timing: "At initiation Other adjusting operations", cause: "The status response from the camera is abnormal.Language or region setting was changed from English.", add: "N/A", other: "N/A", clear: "Check the USB connection of the camera. Unplug and re-plug the USB cable.", after: "Check the USB connection of the camera. Unplug and re-plug the USB cable.Restart both the computer and the main unit.", checkpoints: "Hardware testing, adjustment, parts replacement, etc. Run ResetCameraValue.bat to reset the xenon lamp light intensity and each camera's settings. Restart both the computer and the main unit." },
+        "40": { id: "40", scenario: "While starting upDuring maintenance", name: "Unable to adjust camera gain.", msg: "a)  Adjustment for obtaining correct images from the digital camera could not be made.Cells are dirty.", instr: "Click [Clear] and the error will be cleared.=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.Click [Clear] and the error will be cleared.=> Perform automatic washing and clean the cell.=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "GUI", timing: "At initiation Other adjusting operations", cause: "The gain is over the threshold.", add: "N/A", other: "N/A", clear: "None.", after: "Turn the main unit off and on and restart it again.", checkpoints: "Hardware testing, adjustment, parts replacement, etc. Run ResetCameraValue.bat to reset the xenon lamp light intensity and each camera's settings." },
+        "41": { id: "41", scenario: "While starting upDuring maintenance", name: "Unable to adjust xenon light volume.", msg: "a)  Adjustment for obtaining correct images from the digital camera could not be made.Cells are dirty.Xenon lamp is deteriorating.", instr: "Click [Clear] and the error will be cleared.=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.Click [Clear] and the error will be cleared.=> Perform automatic washing and clean the cell.=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.Click [Clear] and the error is cleared.=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "GUI", timing: "At initiation Other adjusting operations", cause: "The gain is over the threshold.", add: "N/A", other: "N/A", clear: "None.", after: "Turn the main unit off and on and restart it again.", checkpoints: "Hardware testing, adjustment, parts replacement, etc. Run ResetCameraValue.bat to reset the xenon lamp light intensity and each camera's settings." },
+        "42": { id: "42", scenario: "While starting upDuring maintenance", name: "Blank measurement of the flow cell encountered a problem.", msg: "Adjustments failed for the digital camera to retrieve images correctly.", instr: "Click the <clear> button to clear the error.=> perform automatic washing=> Perform priming=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "GUI", timing: "When sheath solution is flowingAfter the rack is washed manually After priming After other adjusting operations", cause: "Some particles have been detected in the field of view of the sheath solution image.An object of substantial size has been detected.", add: "N/A", other: "N/A", clear: "None.", after: "Perform automatic washing Perform priming.", checkpoints: "Hard testing, adjustment, parts replacement, etc. Clean the inside of the flow cell." },
+        "44": { id: "44", scenario: "Sampler measurement", name: "Focus adjustment has failed.", msg: "Focus adjustment has failed.", instr: "Click the <clear> button to clear the error.=> Check the state of the calibrator (purity, exp. date, etc.) and readjust the focus in the <focus automatic readjustment screen>.=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "GUI", timing: "When adjusting various things.", cause: "The number of particles in the adjustable range has been below or above the standards.", add: "/Code 1: Cause of the errorCode 2: -Code 3: -", other: "[5]    Code 1::No specimen (during focus adjustment):No specimen (during calibration):Abnormal particle count after coarse adjustment [4]:Abnormal particle count after main adjustment:Spits are not set in the correct position.:Other than SED rack was used.", clear: "None.", after: "=> Check the state of the calibrator (purity, exp. date), etc. and perform automatic focus adjustment.", checkpoints: "Hard testing, adjustment, parts replacement, etc. Clean the inside of the flow cell." },
+        "45": { id: "45", scenario: "Sampler measurement", name: "Unable to calibrate particle concentration.", msg: "Unable to calibrate particle concentration.", instr: "Click the <clear> button to clear the error.=> Check the state of the calibrator (purity, exp. date, etc.) and readjust the focus in the <focus automatic readjustment screen>.=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "GUI", timing: "Initiation Sampler measurement Other adjustment", cause: "The adjusted coefficient has been less or greater than the specified value.", add: "N/A", other: "N/A", clear: "None.", after: "=> Check the state of the calibrator (purity, exp. date), etc. and perform automatic focus adjustment.", checkpoints: "Hard testing, adjustment, and parts replacement. Adjust liquid level sensing board." },
+        "46": { id: "46", scenario: "Sampler measurement", name: "Insufficient sample volume", msg: "There is not enough sample to be measured.", instr: "Click the <clear> button to clear the error.=> Check that the sample in the sample tube is 40 mm or more in height (app. 2 mL).", detected: "Main unit", timing: "Sampler measurementSTAT measurement Control measurement Focus adjustment Calibration WashingOther adjusting operations", cause: "The liquid detection sensor did not detect anything when the nozzle goes down at a lower speed.", add: "Information on the sample to be aspirated (measurement No., barcode ID, rack No., test tube position No., rack ID)Code 1: -Code 2: Sequence table No.Code 3: -", other: "Code 2:[0-255] refer to8.1.4 Sequence table No.", clear: "Check the volume of the sample.", after: "None.", checkpoints: "Hardware testing, adjusting, part replacement, etc." },
+        "47": { id: "47", scenario: "Sampler measurement", name: "Couldn't read barcode ID.", msg: "a)  Either a barcode label is not appended onto the spitz tube or the printed label is faded or blurred.The barcode label is not in the correct position.The barcode unit is not working properly.", instr: "a)  Append a new barcode and perform measurement again.Append the barcode label onto the correct position and perform measurement again.Check the error No. in the <Error list screen> and contact customer service.", detected: "Main unit", timing: "Sampler measurementSTAT measurement Control measurement Focus adjustment Calibration WashingOther adjusting operations", cause: "The barcode reader responded \"?\".The barcode did not send a response when the rack was transported to the ports by the rack lever.", add: "Information on the sample to be aspirated (measurement No., barcode ID, rack No., test tube position No., rack ID)Code 1: -Code 2: -Code 3: -", other: "N/A", clear: "Check barcodes.", after: "None.", checkpoints: "Hardware testing, adjusting, part replacement, etc." },
+        "48": { id: "48", scenario: "Sampler measurement", name: "Sampler measurement lever port feed error", msg: "An error occurred while transporting a sample rack.", instr: "Click the <clear> button to clear the error.=> Check that there are no obstacles in the direction the sample rack is moving in.=> Check that the sample container is set within the sample rack and not sticking out.=> Clean the sampler unit.=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "Main unit", timing: "Sampler measurementSTAT measurement Control measurement Focus adjustment Calibration WashingOther adjusting operations", cause: "During the port feed operation of the rack with the rack lever, a slit indicating one rotation could not be detected in the drive unit.", add: "N/A", other: "N/A", clear: "Check that the rack is not stuck.", after: "Clean the sampler.", checkpoints: "Hardware testing, adjusting, part replacement, etc." },
+        "51": { id: "51", scenario: "Usability", name: "The STAT port is not placed at the aspiration position.", msg: "a)  The STAT port is not placed at the aspiration position.There is an error in the port set sensor.", instr: "a)  Click [Clear] and the error will be cleared.=> set the STAT port in the aspirating position, and click <STAT> measurement.Check the error No. in the <error list screen>, and contact customer service.", detected: "Main unit", timing: "Sampler measurementSTAT measurement Control measurement Focus adjustment Calibration WashingOther adjusting operations", cause: "Port set sensor", add: "N/A", other: "N/A", clear: "Set the STAT port.", after: "None.", checkpoints: "Hardware testing, adjusting, part replacement, etc." },
+        "52": { id: "52", scenario: "Sampler measurement", name: "Loading side of sampler is full of racks.", msg: "The loading side of the sampler unit is full with racks.", instr: "Click the <clear> button to clear the error.=> Check that there is not more than the maximum number of racks (5) on the loading side.=> Check that the rack is not pressed too back in he measurement position.", detected: "Main unit", timing: "Sampler measurementSTAT measurement Control measurement Focus adjustment Calibration WashingOther adjusting operations", cause: "When the measurement lever returns to the initial point to connect racks, the introduction lever is rotated in the opposite direction and the rack sensors (rack ID sensors) in the front and back of the loading side are both ON.", add: "N/A", other: "N/A", clear: "Remove the rack.", after: "None.", checkpoints: "Hardware testing, adjusting, part replacement, etc." },
+        "53": { id: "53", scenario: "Always monitored.", name: "Unexpected communication was detected between the instrument and the PC.", msg: "The instrument made an attempt to perform an operation the PC did not expect.", instr: "Click the <clear> button to clear the error.The processes including measurement are continued.=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "GUI", timing: "Always", cause: "The instrument sent a command that the application in the PC did not expect.The versions of the instrument and the application did not match.", add: "N/A", other: "N/A", clear: "None.", after: "Restart both the computer and the main unit.", checkpoints: "Restart both the computer and the main unit." },
+        "54": { id: "54", scenario: "After measurement results are generated.", name: "Register new sheath solution.", msg: "The number of measurements has exceeded the measurable number with the barcode of the currently registered sheath solution.", instr: "Prepare a new sheath solution bottle and change it out.=> Click [Clear] and the error will be cleared.=> <Barcode register screen> will be displayed. Register a new sheath solution.", detected: "GUI", timing: "Initiation Sampler measurement Error recovery Other adjusting operations", cause: "A specified amount of sheath solution was used from the sheath solution, the Reagent Code of which had been registered.", add: "Remain 0～100 %, MinReagentRemain 0~100%", other: "Remain: Current remaining amount [%] MinReagentRemain: The value at which ths error shall occur [%]", clear: "Change the empty sheath solution bottle connected to the instrument with a new sheath solution bottle. If it is not empty, no operation is needed.", after: "None.", checkpoints: "Reset the ReagentCode" },
+        "55": { id: "55", scenario: "While communicating", name: "There is no response to an order inquiry from the host PC.", msg: "a)  The communication cable connecting the host PC and the PC in use is unplugged.There is an error in the application of the host PC.", instr: "c) Check the order register of the host PC. Check if the communication cable is connected properly.=> Click [Clear] and the error will be cleared.b) Check the order register of the host PC. Click the<clear> button to clear the error.=> Check the error number in the <error list screen> and report to service engineers.", detected: "GUI HOST_DLL", timing: "During a qualitative order inquiryDuring a sediment order inquiry", cause: "1)    The HOST DLL process determines the error and notifies the GUI of the error.The order inquiry communication from GUI to the host computer is successfully completed up to EOT. Next, ENQ from the host does not start within 3 minutes (can be changed).The content of communication from the host computer to GUI is out of specification.", add: "N/A", other: "Error codes displayed in the host communication log fileTCP/IP communication 1: NAK received2: Time out3: No connection made:<ACK> was received from the host, but the host closed without receiving data and became unconnected.4: Socket disconnection detected99: Reception from the host computer does not contain the first <SOH> and the last <EOT>.Serial communication 11: No response aftersending <ENQ> 12: <ACK> cannot bereceived even after sending the same frame 6 times (including the first time).13: No response after sending frame14: Sediment instrument side PC cannot complete receiving next frame or cannot receive <EOT> after sending a response.15: Sediment instrument side PC cannot receive <CR><LF> at the end of the frame after receiving<STX>.16: Port not openedOther99: Unknown error", clear: "Check the application in the host computer.Check the communication cable and wiring.", after: "Check the application in the host computer. Check the communication cable and wiring.", checkpoints: "Check the application in the host computer. Check the communication cable and wiring." },
+        "56": { id: "56", scenario: "While communicating", name: "Communication with the host OC has failed.", msg: "a)  The communication cable connecting the host PC and the PC in use is unplugged.There is an error in the application of the host PC.", instr: "Check the connection of the communication cable=> Click [Clear] and the error will be cleared.click [Clear] and the error will be cleared.=> Check the error number in the <error list screen> and report to service engineers.", detected: "GUI HOST_DLL", timing: "During a qualitative order inquiryDuring sending qualitative resultsDuring a sediment order inquiry During sending sediment results", cause: "HOST DLL processes make judgment and may send an error to GUI.Maximum retry No. Timeout", add: "When an error occurs due to a rank name mismatch, the item name and rank name with the error are displayed in the additional information.", other: "0", clear: "Check the application in the host computer.Check the communication cable and wiring.", after: "Check the settings of host communication in the GUI. Check the communication cable and wiring.", checkpoints: "Check the application in the host computer. Check the communication cable and wiring." },
+        "57": { id: "57", scenario: "Always monitored.", name: "TCP/IP connection with the host computer is disconnected.", msg: "a)  The communication cable connecting the host PC and the PC in use is unplugged.The host computer application is closed.", instr: "Check if the communication cable is connected.=> Click [Clear] and the error will be cleared.Put the application on the host computer into communication standby mode.=> Click [Clear] to clear the error.", detected: "GUI HOST_DLL", timing: "Always", cause: "HOST DLL detects an error and notifies the GUI.Once the socket connection with the host is complete,-When the host closes the socket.-Connection is detected by KeepAlive function. If the KeepAlive signal is interrupted for10 seconds, it is determined to be disconnected.", add: "N/A", other: "0", clear: "Check the application in the host computer.Check the communication cable and wiring.", after: "Check the settings of host communication in the GUI. Check the communication cable and wiring.", checkpoints: "Check the settings of host communication in the GUI. Check the communication cable and wiring." },
+        "58": { id: "58", scenario: "While communicating", name: "Communication with CHM analyzer has failed.", msg: "a)  The communication cable connecting the PC and sediment analyzer is unpluged.The communication settings of the PC and the sediment analyzer is erroneous.", instr: "Check if the communication cable is connected.=> Click [Clear] and the error will be cleared.click [Clear] and the error will be cleared.=> Check the error number in the <error list screen> and report to service engineers.", detected: "GUI HOST_DLL", timing: "When inquiring sediment order When sending sediment results.", cause: "HOST DLL processes make judgment and may send an error to GUI.Maximum retry No. Timeout (30 sec)", add: "When an error occurs due to a rank name mismatch, the item name and rank name with the error are displayed in the additional information.", other: "Error codes displayed in the CHM communication log file11: No response after sending <ENQ>12: <ACK> cannot be received even after sending the same frame 6 times (including the first time).13: No response after sending frame14: Sediment instrument side PC cannot complete receiving next frame or cannot receive <EOT> after sending a response.15: Sediment instrument side PC cannot receive <CR><LF> at the end of the frame after receiving<STX>.16: Port not opened", clear: "Check the communication cable and wiring.", after: "Check the communication settings and the cable connection the sediment analyzer.", checkpoints: "Check the communication settings and the cable connection the sediment analyzer." },
+        "59": { id: "59", scenario: "Always monitored.", name: "The front cover is open. The front cover is open.", msg: "The front cover is open.", instr: "Close the front cover.=> Click [Clear] and the error will be cleared.", detected: "Main unit", timing: "When the instrument is performing processes, There is no detection while the PC is in stanby and stopped.", cause: "Detected with the front cover open and close sensor.", add: "/Code 1: 3Code 2: -Code 3: -", other: "Code 1:[3] The error occurred when the front cover was opened.", clear: "Close the front cover.", after: "None.", checkpoints: "Check the sensor, adjustments, part replacements, etc." },
+        "60": { id: "60", scenario: "Always monitored.", name: "Power voltage drop was detected. The front cover is open.", msg: "The power voltage is getting low.", instr: "Click the <clear> button to clear the error.=> Check there is no problem with the power code connected to the instrument and the wiring of it to an outlet.", detected: "Main unit", timing: "Always", cause: "Voltage drop was detected in the 5V, 12V or 24V system.The front cover sensor shall detect the cover to be closed.If there is voltage drop in the 5V system, the Ethernet micro computer will be reset and the message \"The TCP/IP connection with the main instrument failed\"might be sent.", add: "/Code 1: 0-2Code 2: -Code 3: -", other: "[0]      Code 1:The error occurred in the 5V systemThe error occurred in the 12V systemThe error occurred in the 24V system", clear: "None.", after: "Check the power cordUntangle the tangling cables", checkpoints: "Check the sensor, adjustments, part replacements, etc." },
+        "61": { id: "61", scenario: "During a check before standby", name: "The xenon lamp needs to be replaced soon.", msg: "The usage count is over the specified value. Or the lamp is due for replacement.", instr: "Click the <clear> button to clear the error.=> Check the error number in the <error list screen> and report to service engineers.", detected: "GUI", timing: "When initiation is completedWhen the instrument completes sampler measurement and returns to the standby screen.", cause: "The total measurement count is over the specified value.The specified number of years has passed since the last change.", add: "N/A", other: "N/A", clear: "None.", after: "Contact customer service.", checkpoints: "Parts Replacement" },
+        "62": { id: "62", scenario: "During a check before standby", name: "The cap seal for the sheath pump is due for replacement.", msg: "The usage count is over the specified value. Or the lamp is due for replacement.", instr: "Click the <clear> button to clear the error.=> Check the error number in the <error list screen> and report to service engineers.", detected: "GUI", timing: "When initiation is completedWhen the instrument completes sampler measurement and returns to the standby screen.", cause: "The total measurement count is over the specified value.The specified number of years has passed since the last change.", add: "N/A", other: "N/A", clear: "None.", after: "Change cap seals.", checkpoints: "Parts Replacement" },
+        "63": { id: "63", scenario: "During a check before standby", name: "The cap seal for the sample pump is due for replacement.", msg: "The usage count is over the specified value. Or the lamp is due for replacement.", instr: "Click the <clear> button to clear the error.=> Check the error number in the <error list screen> and report to service engineers.", detected: "GUI", timing: "When initiation is completedWhen the instrument completes sampler measurement and returns to the standby screen.", cause: "The total measurement count is over the specified value.The specified number of years has passed since the last change.", add: "N/A", other: "N/A", clear: "None.", after: "Change cap seals.", checkpoints: "Parts Replacement" },
+        "64": { id: "64", scenario: "During a check before standby", name: "The sample filter is due for replacement.", msg: "The usage count is over the specified value. Or the lamp is due for replacement.", instr: "Click the <clear> button to clear the error.=> Change sampler filters", detected: "GUI", timing: "When initiation is completedWhen the instrument completes sampler measurement and returns to the standby screen.", cause: "The total measurement count is over the specified value.The specified number of years has passed since the last change.", add: "N/A", other: "N/A", clear: "None.", after: "Replace the sample filter", checkpoints: "Parts Replacement" },
+        "65": { id: "65", scenario: "After measurement results are generated.", name: "The QC (L-J) result is abnormal.", msg: "The results do not fit in the range of control measurement variance estimated from the variance of control in a period of time in the past.", instr: "Click the <clear> button to clear the error.=> Check the state of the control solution (purity, exp. date) and readjust the focus in the <focus automatic adjustment screen>.=> Perform control measurement=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "GUI", timing: "When control measurement results were generated.", cause: "The number of particles in the control measurement exceeded the 2SD/3SD range tabulated in previous data (same material name and lot number).", add: "N/A", other: "N/A", clear: "View the control results and check. Check the state of the control solution (purity, exp. date).", after: "Perform control measurement", checkpoints: "Check the sensor, adjustments, part replacements, etc." },
+        "66": { id: "66", scenario: "After measurement results are generated.", name: "The control measurement results are out of standard range.", msg: "The particle number of control measurement is out of the expected range.", instr: "Click the <clear> button to clear the error.=> Check the state of the control solution (purity, exp. date), and readjust the focus in the <automatic focus readjustment screen>.=> Perform control measurement=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "GUI", timing: "When control measurement results were generated.", cause: "The particle number of control measurement is out of the expected range.", add: "N/A", other: "N/A", clear: "View the control results and check. Check the state of the control solution (purity, exp. date).", after: "Perform control measurement", checkpoints: "Check the sensor, adjustments, part replacements, etc." },
+        "67": { id: "67", scenario: "During a check before standby", name: "Over xx days have passed since the last control measurement.", msg: "Control measurements have not been performed in the specified period.", instr: "Click the <clear> button to clear the error.=> Perform control measurement=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "GUI", timing: "When initiation is completedWhen the instrument completes sampler measurement and returns to the standby screen.", cause: "Control measurements have not been performed in the specified period.", add: "N/A", other: "N/A", clear: "View the control results and check. Check the state of the control solution (purity, exp. date).", after: "Perform control measurement", checkpoints: "Check the sensor, adjustments, part replacements, etc." },
+        "68": { id: "68", scenario: "After measurement results are generated.", name: "Control solution expired.", msg: "The control solution has expired.", instr: "Click the <clear> button to clear the error.=> Check the exp. date of the control solution, and replace it if it has expired.=> Perform control measurement=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "GUI", timing: "When control measurement results were generated.", cause: "The registered material expired.", add: "N/A", other: "N/A", clear: "Check the state of the control solution (exp.Date, etc.).", after: "Re-register the lot of the control solution.Perform control measurement", checkpoints: "Check the sensor, adjustments, part replacements, etc." },
+        "69": { id: "69", scenario: "After measurement results are generated.", name: "Calibrator expired.", msg: "The calibrator has expired.", instr: "Click the <clear> button to clear the error.=> Check the exp. date of the calibrator, and replace it if it has expired.=> Readjust the focus in the <automatic focus adjustment screen>=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "GUI", timing: "When the results of automatic focus adjustment were generated. The exp. date of the calibrator cannot be detected if the data is manually input as the exp. date is fetched only from the information in the barcode.", cause: "Calibrator has expired.", add: "N/A", other: "N/A", clear: "Check the state of the calibrator (exp. date), etc.", after: "Readjust the focus using calibrator within exp. date.", checkpoints: "Check the sensor, adjustments, part replacements, etc." },
+        "70": { id: "70", scenario: "After measurement results are generated.", name: "Calibrator expired.", msg: "The calibrator has expired.", instr: "Click the <clear> button to clear the error.=> Check the exp. date of the calibrator, and replace it if it has expired.=> Readjust the focus in the <automatic focus adjustment screen>=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "GUI", timing: "When the results of calibration were generated. The exp. date of the calibrator cannot be detected if the data is manually input as the exp. date is fetched only from the information in the barcode.", cause: "Calibrator has expired.", add: "N/A", other: "N/A", clear: "Check the state of the calibrator (exp. date), etc.", after: "Readjust the focus using calibrator within exp. date.", checkpoints: "Check the sensor, adjustments, part replacements, etc." },
+        "71": { id: "71", scenario: "After measurement results are generated.", name: "Sheath solution expired; results compromised", msg: "The sheath solution has expired.", instr: "Click the <clear> button to clear the error.=> Check the exp. date of the sheath solution, and replace it if it has expired.", detected: "GUI", timing: "When the results of sampler measurement, STAT measurement, control measurement or automatic focus adjustment are generated.", cause: "When measurement results are generated while the registered sheath solution which has expired is set.", add: "N/A", other: "N/A", clear: "Check the state of the sheath solution (exp. date).", after: "Connect the sheath solution within the exp. date to the main instrument.Register the ReagentCode in the consumable replacement screen.", checkpoints: "Check the sensor, adjustments, part replacements, etc." },
+        "72": { id: "72", scenario: "Time elapsed", name: "Over 24 hours have passed since power-on.", msg: "Over 24 hours have passed since power- on.", instr: "Click the <clear> button to clear the error.=> Perform shutdown and restart the instrument again.", detected: "GUI", timing: "When the instrument has been operating 24 hours continuously since GUI initiation.", cause: "Over 24 hours have passed.", add: "N/A", other: "N/A", clear: "None.", after: "Perform shutdown first.The power of the main instrument and the PC will turn off. Power on the PC again. Power on the main instrument again.", checkpoints: "Check the sensor, adjustments, part replacements, etc." },
+        "73": { id: "73", scenario: "Time elapsed", name: "Over xx hours have passed since the last periodic washing.", msg: "The planned periodic washing time has passed.", instr: "Click the <clear> button to clear the error.=> The instrument will automatically perform a periodic washing.", detected: "Main unit", timing: "When a periodic washing was missed and the next planned periodic washing time is reached.", cause: "Elapsed timePeriodic washings are performed whether or not the instrument is at standby or measuring samples.The main instrument issues a notification when it performs washings.", add: "N/A", other: "N/A", clear: "None.", after: "Perform periodic washing.", checkpoints: "Check the sensor, adjustments, part replacements, etc." },
+        "74": { id: "74", scenario: "During a check before standby", name: "HDD has run out of disk space.", msg: "There is not enough space in the HDD of the PC.", instr: "Click the <clear> button to clear the error.=> Back up the data in the HDD to external media, and delete the data from the HDD to increase free space.", detected: "GUI", timing: "-  When the instrument has initiated.When the sampler measurement screen returns to standby.", cause: "When the remaining HDD space is less than 10%.", add: "N/A", other: "N/A", clear: "Open the Windows Explorer, and check the HDD space.", after: "Back up the data.", checkpoints: "Back up the data." },
+        "76": { id: "76", scenario: "Sampler measurement", name: "Problems were detected while analyzing images.", msg: "Problems were detected while analyzing images.", instr: "Click the <clear> button to clear the error.=> Remeasure the sample at issue.=> If the error reoccurs, please check its error No. in the <Error list screen> and report it to customer service.", detected: "GUIAUTION ENGINE", timing: "- When an image processing has been performed such as sampler measurement, STAT measurement, control measurement, automatic focus adjustment, etc.", cause: "1)  A response from AUTION ENGINE issues an error. It can be an algorithm error concerning processes of classification, cropping, etc., or it can be that there is not enough space to save the images.The GUI might share the part of the processing functions. In that case, the GUI itself will make an error judgment.In rare cases, the OS may detect an abnormality in the GPU and the driver may stop.", add: "When a GPU error is detected, \"GPU Error…\" is displayed in the additional information and the PC must be restarted.", other: "N/A", clear: "None.", after: "Check if recent measurement result images do not have problems.Perform control measurement.", checkpoints: "Check the sensor, adjustments, part replacements, etc." },
+        "77": { id: "77", scenario: "Sampler measurement", name: "Sampling trouble", msg: "The sample volume was insufficient for five consecutive samples.b) This might be an error in the system.", instr: "Click [Clear] and the error will be cleared.=> Perform control measurementClick [Clear] and the error will be cleared.=> Check the error number in the <error list screen> and report to service engineers.", detected: "Main unit", timing: "1)    Aspirating operations such as sampler measurement, STAT measurement or control measurementCamera position Adjustment, Flow test in service menu", cause: "1)    During the measurement, \"No Sample\" continued for 5 consecutive samples.\"No specimen\" is detected after starting adjustment.Inconsistency in parameters. Automatic dilution retest (Additional_wash, Measurement_error, Retest_flag) was enabled and rack stop (Is_rack_stop) was disabled. Measurement_error, Retest_flag) is enabled and rack stop (Is_rack_stop) is disabled. (V01.18 or older only)", add: "Information on the sample to be aspirated (measurement No., barcode ID, rack No., test tube position No., rack ID)Code 1: Operation mode Code 2: Operation sequence No.Code 3: -", other: "Code 1:No sample for 5 continuous samples during measurementNo sample occurred once during adjustment or test mode.Code 2:[0-255] refer to8.1.4 Sequence table No.", clear: "None.", after: "Check if recent measurement result images do not have problems.Perform control measurement.", checkpoints: "Check sensors, make adjustments, replace parts, etc.If the parameters are checked and inconsistent, then the automatic dilution retest and rack stop settings should be reconciled to be a combination of \"enable, disable\" or \"disable, enable\" respectively." },
+        "78": { id: "78", scenario: "Sampler measurement", name: "Sample flow trouble", msg: "The measurement results show that abnormally few particles were in the five consecutive samples.b) This might be an error in the system.", instr: "Click [Clear] and clear the error.=> Perform control measurementclick [Clear] and the error will be cleared.=> Check the error number in the <error list screen> and report to service engineers.", detected: "GUI", timing: "- During sampler measurement, STAT measurement or control measurement", cause: "The \"Total number of particles is too small\" flag continued to be displayed for five consecutive samples during the measurement.Camera error\" flag continued for5 samples in a row during the measurement.3) Background failure\" flag continued for 5 samples in a row during the measurement.", add: "N/A", other: "N/A", clear: "None.", after: "Check if recent measurement result images do not have problems.Perform control measurement.", checkpoints: "Check the sensor, adjustments, part replacements, etc." },
+        "79": { id: "79", scenario: "After turning the main instrument on", name: "Serial Nos. of sediment analyzer data do not match.", msg: "The serial Nos. of the connected PC and the analyzer do not match.", instr: "Terminate the application.=> Check the serial No. on the main instrument. If errors occur again, check the error No. in the<error list screen> and contact customer service.", detected: "GUI", timing: "When initiation process is started.", cause: "There is no data of serial No. of the analyzer in the main unit settings (serial No. ) in the PC that match.", add: "N/A", other: "N/A", clear: "Close the application. Retry restarting the application.", after: "Close the application.Check that the PC and the main unit are not swapped.", checkpoints: "If they are not swapped, replace the memory in the main unit with a new one and the instrument serial No. of the main unit will reset. The instrument can be turned on with the serial No. now the PC recognizes." },
+        "80": { id: "80", scenario: "While a driving unit is operating.", name: "There is an error in the flow volume of the sample filter.", msg: "Unstable flow volume or bubbles were detected.", instr: "Click the <clear> button to clear the error.=> Perform priming=> The instrument will automatically perform a periodic washing.", detected: "Main unit", timing: "When sample aspirating operation is performed.", cause: "Clogged sampler filter Clogged nozzle", add: "Information on the sample to be aspirated (measurement No., barcode ID, rack No., test tube position No., rack ID)Code 1: -Code 2: -Code 3: -", other: "N/A", clear: "None.", after: "Perform priming.If that does not solve the problem, perform an automatic washing.", checkpoints: "Cleaning sampling filter, clogged nozzle" },
+        "81": { id: "81", scenario: "STATmeasurement", name: "Unable to register STAT settings.", msg: "Set again after the analyzer is ready for setting.", instr: "Click [Clear] to clear the error.↓Wait until the analyzer is ready for STAT setting.↓Set STAT measurement conditions.", detected: "GUI", timing: "menu: Stat register", cause: "The device can not accept STAT reservation. For example, STAT measurement has already started. The device can accept STAT reservations only when the LED on the STAT measurement start button is lit.", add: "N/A", other: "N/A", clear: "Set the STAT port.", after: "None.", checkpoints: "None." }
+    };
+
+    const errorGrid = document.getElementById('errorGrid');
+    const searchInput = document.getElementById('searchInput');
+
+    function formatSMValue(val) {
+        if (!val || val.trim() === "" || val.toUpperCase() === "N/A" || val === "None.") {
+            return '<span class="no-data">N/A (No Data)</span>';
+        }
+        return val;
     }
 
-    function renderCards(data) {
-        const grid = document.getElementById('errorGrid');
-        const countDisplay = document.getElementById('resultCount');
-        grid.innerHTML = '';
-        
-        if(data.length === 0) {
-            grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 50px;">
-                <i class="fas fa-search-minus" style="font-size: 3rem; color: #ccc;"></i>
-                <p style="margin-top: 10px; color: #999;">找不到符合的錯誤代碼</p>
-            </div>`;
-            countDisplay.innerText = `顯示 0 筆結果`;
-            return;
-        }
+    function createManualDetailList(code) {
+        const sm = smDataOriginal[code];
+        const displayData = sm || {
+            id: code,
+            scenario: "N/A",
+            name: rawErrors.find(r => r[0] === code)?.[1] || "N/A",
+            msg: "N/A",
+            instr: "N/A",
+            detected: "N/A",
+            timing: "N/A",
+            cause: "N/A",
+            add: "N/A",
+            other: "N/A",
+            clear: "N/A",
+            after: "N/A",
+            checkpoints: "N/A"
+        };
 
-        countDisplay.innerText = `顯示 ${data.length} 筆結果`;
+        const fields = [
+            { label: "Identification No.", value: displayData.id, icon: "fa-id-badge" },
+            { label: "Scenario", value: displayData.scenario, icon: "fa-history" },
+            { label: "Error name", value: displayData.name, icon: "fa-exclamation-circle" },
+            { label: "Error message to the user", value: displayData.msg, icon: "fa-user-tag" },
+            { label: "Message of instruction to the user", value: displayData.instr, icon: "fa-bullhorn" },
+            { label: "Detected by", value: displayData.detected, icon: "fa-search" },
+            { label: "Detection timing", value: displayData.timing, icon: "fa-stopwatch" },
+            { label: "Cause", value: displayData.cause, icon: "fa-bug" },
+            { label: "Additional data", value: displayData.add, icon: "fa-file-medical" },
+            { label: "Other data", value: displayData.other, icon: "fa-clipboard-list" },
+            { label: "User operations to clear error", value: displayData.clear, icon: "fa-magic" },
+            { label: "User operations after clearing the error and returning to stand-by", value: displayData.after, icon: "fa-vial" },
+            { label: "Checkpoints for service engineers", value: displayData.checkpoints, icon: "fa-wrench" }
+        ];
 
-        data.forEach(item => {
+        return fields.map(f => `
+            <div class="sm-item">
+                <span class="sm-label">
+                    <i class="fas ${f.icon}"></i> ${f.label}
+                </span>
+                <div class="sm-value">${formatSMValue(f.value)}</div>
+            </div>
+        `).join('');
+    }
+
+    function renderCards(filter = '') {
+        errorGrid.innerHTML = '';
+        const filtered = rawErrors.filter(err => 
+            err[0].includes(filter) || 
+            err[1].toLowerCase().includes(filter.toLowerCase()) || 
+            err[2].includes(filter)
+        );
+
+        filtered.forEach(err => {
+            const detailId = `detail-${err[0]}`;
+            const manualId = `manual-${err[0]}`;
             const card = document.createElement('div');
-            card.className = `error-card ${item.cat}`;
+            card.className = 'error-card';
+            card.onclick = () => toggleDetail(detailId);
+            
             card.innerHTML = `
                 <div class="card-header">
-                    <div>
-                        <div class="error-msg-zh">${item.zh}</div>
-                        <div class="error-msg-en">${item.en}</div>
-                    </div>
-                    <span class="error-code">#${item.code}</span>
+                    <span class="error-code">CODE ${err[0]}</span>
+                    <i class="fas fa-chevron-right" style="color:#d1d5db; font-size:0.8rem"></i>
                 </div>
-                <div class="quick-info">
-                    <p><strong><i class="fas fa-info-circle"></i> 成因:</strong> ${item.cause}</p>
+                <div class="card-body">
+                    <h2 class="error-title">${err[2]}</h2>
+                    <p class="error-sub">${err[1]}</p>
+                    <div class="info-row">
+                        <span class="label"><i class="fas fa-exclamation-circle"></i> 故障情境 (Scenario)</span>
+                        <div style="font-size:0.9rem">${err[1]}</div>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">可能原因</span>
+                        <div style="font-size:0.9rem">${err[3]}</div>
+                    </div>
+                    <div class="info-row">
+                        <span class="label"><i class="fas fa-comment-medical"></i> 醫檢師建議處置</span>
+                        <div class="action-text">${err[4]}</div>
+                    </div>
                 </div>
-                <div class="detail-section" id="detail-${item.code}">
-                    <div class="detail-item">
-                        <span class="detail-label">建議處置 (醫檢師):</span>
-                        <p>${item.action}</p>
+                <div class="card-detail" id="${detailId}" onclick="event.stopPropagation()">
+                    <div class="info-item">
+                        <span class="label">Service Manual 描述</span>
+                        <div style="font-size:0.9rem">${err[5]}</div>
                     </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Service Manual 描述:</span>
-                        <p>${item.manual}</p>
+                    <div class="engineer-box">
+                        <span class="label"><i class="fas fa-tools"></i> 工程師技術動作</span>
+                        <div style="font-size:0.9rem; color:#9A3412">${err[6]}</div>
                     </div>
-                    <div class="detail-item">
-                        <span class="detail-label">工程師技術動作 (Service Team):</span>
-                        <p>${item.engineer}</p>
+
+                    <button class="manual-toggle-btn" onclick="toggleManual(event, '${err[0]}')">
+                        <i class="fas fa-file-medical-alt"></i>
+                        <span>詳細維修資訊 (Service Manual 原文)</span>
+                        <i class="fas fa-chevron-down ml-auto"></i>
+                    </button>
+                    <div class="service-manual-detail" id="${manualId}">
+                        ${createManualDetailList(err[0])}
                     </div>
                 </div>
             `;
-            
-            card.onclick = () => toggleDetail(item.code);
-            grid.appendChild(card);
+            errorGrid.appendChild(card);
         });
     }
 
-    function toggleDetail(code) {
-        const el = document.getElementById(`detail-${code}`);
-        const isVisible = el.style.display === 'block';
-        el.style.display = isVisible ? 'none' : 'block';
+    function toggleDetail(id) {
+        const el = document.getElementById(id);
+        const isOpen = el.style.display === 'block';
+        el.style.display = isOpen ? 'none' : 'block';
     }
 
-    function filterData() {
-        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-        const category = document.getElementById('categoryFilter').value;
-
-        const filtered = errorData.filter(item => {
-            const matchesSearch = 
-                item.code.includes(searchTerm) || 
-                item.zh.toLowerCase().includes(searchTerm) || 
-                item.en.toLowerCase().includes(searchTerm) ||
-                item.cause.toLowerCase().includes(searchTerm);
-            
-            const matchesCategory = category === 'all' || item.cat === category;
-            
-            return matchesSearch && matchesCategory;
-        });
-
-        renderCards(filtered);
+    function toggleManual(e, code) {
+        e.stopPropagation();
+        const manual = document.getElementById(`manual-${code}`);
+        const btn = e.currentTarget;
+        const icon = btn.querySelector('.fa-chevron-down');
+        
+        const isShow = manual.classList.toggle('show');
+        if(icon) icon.style.transform = isShow ? 'rotate(180deg)' : 'rotate(0deg)';
     }
 
-    window.onload = init;
+    searchInput.addEventListener('input', (e) => renderCards(e.target.value));
+    window.onload = () => renderCards();
 </script>
 
 </body>
